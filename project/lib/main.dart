@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:project/pages/login.dart';
 
 void main() {
-  runApp(AppWidget(title: 'OLA MUNDOOO22333222'));
+
+IziGymLoginApp loginscreen = IziGymLoginApp();
+  runApp(loginscreen);
 }
 
 class AppWidget extends StatelessWidget {
