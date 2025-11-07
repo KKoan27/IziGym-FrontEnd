@@ -1,23 +1,28 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(AppWidget(title: 'OLA MUNDOOO22333222'));
+  runApp(MaterialApp(home: MontagemTreino()));
 }
 
-class AppWidget extends StatelessWidget {
-  final String title;
+class MontagemTreino extends StatefulWidget {
+  @override
+  State<MontagemTreino> createState() {
+    return MontagemTreinoState();
+  }
+}
 
-  const AppWidget({super.key, required this.title});
-
+class MontagemTreinoState extends State<MontagemTreino> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.amber,
-      child: Center(
-        child: Text(
-          title,
-          textDirection: TextDirection.ltr,
-          style: TextStyle(color: Colors.black, fontSize: 50),
+    return Scaffold(
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(child: Text("Ola mundo")),
+            Container(child: Text("Ola mundo2")),
+            Container(child: Text("Ola mundo3")),
+          ],
         ),
       ),
     );
