@@ -1,32 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:project/pages/login.dart';
+import 'package:project/pages/HomePage.dart';
 
 void main() {
-  IziGymLoginApp loginscreen = IziGymLoginApp();
-  runApp(loginscreen);
-}
-
-class MontagemTreino extends StatefulWidget {
-  @override
-  State<MontagemTreino> createState() {
-    return MontagemTreinoState();
-  }
-}
-
-class MontagemTreinoState extends State<MontagemTreino> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(child: Text("Ola mundo")),
-            Container(child: Text("Ola mundo2")),
-            Container(child: Text("Ola mundo3")),
-          ],
-        ),
+  runApp(
+    MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red[900]!),
       ),
-    );
-  }
+
+      home: HomePage(),
+      debugShowCheckedModeBanner: false,
+    ),
+  );
 }
