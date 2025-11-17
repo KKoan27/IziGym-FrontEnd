@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:project/pages/treinos.dart';
+import 'package:project/pages/MontagemTreino.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -7,7 +7,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  int locale = 0;
+  int locale = 1;
 
   @override
   Widget build(BuildContext context) {
