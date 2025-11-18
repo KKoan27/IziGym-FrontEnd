@@ -34,7 +34,6 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.black,
-        // TODO: Adicionar um campo de busca (TextField)
         // que pode chamar _exercicioService.fetchExercicios(query: 'novaQuery')
       ),
       body: FutureBuilder<List<Exercicio>>(
@@ -44,7 +43,7 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(
-                color: Color(0xFFE50000), // Vermelho do seu login
+                color: Color(0xFFE50000), // Vermelho IziGym
               ),
             );
           }
@@ -77,10 +76,10 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
             itemBuilder: (context, index) {
               final exercicio = exercicios[index];
               return Card(
-                color: Color(0xFF1C1C1C), // Cinza escuro do seu login
+                color: Color(0xFF1C1C1C),
                 margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 child: ListTile(
-                  // TODO: Usar o exercicio.gifUrl para mostrar uma miniatura
+                  // usa o exercicio.gifUrl para mostrar uma miniatura
                   // leading: Image.network(exercicio.gifUrl, width: 50, height: 50),
                   title: Text(
                     exercicio.nome,
@@ -95,9 +94,7 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
                   ),
                   trailing: Icon(Icons.chevron_right, color: Color(0xFFE50000)),
                   onTap: () {
-                    print("CLICOU NO EXERCÍCIO: ${exercicio.nome}");
-                    // AÇÃO: Navegar para a tela de detalhes
-
+                    // AÇÃO: Navegar para a tela de detalhes do exercício
                     Navigator.push(
                       context,
                       MaterialPageRoute(
