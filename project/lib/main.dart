@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:project/pages/login.dart';
 
+import 'pages/HomePage.dart';
+
 void main() {
 
 IziGymLoginApp loginscreen = IziGymLoginApp();
