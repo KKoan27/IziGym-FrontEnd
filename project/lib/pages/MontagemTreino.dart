@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:project/pages/AdicionaExercicio.dart';
 import 'package:http/http.dart' as http;
@@ -17,7 +15,6 @@ class MontagemTreinoState extends State<MontagemTreino> {
   String nomeTreino = "";
   String descricaoTreino = "";
   String? selectItem;
-  List<String> _items = ['Option 1', 'Option 2', 'Option 3'];
   List<Map<String, dynamic>> bodyExercicios = [];
   @override
   Widget build(BuildContext context) {
@@ -52,8 +49,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
                       }),
                       ElevatedButton(
                         onPressed: (() async {
-                          //Receba os dados em uma variável temporária
-                          final novosExercicios = await Navigator.push(
+                          final exerciciosSelecionados = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) {
@@ -63,10 +59,17 @@ class MontagemTreinoState extends State<MontagemTreino> {
                           );
 
                           // Verifique se o usuário não voltou sem salvar
-                          if (novosExercicios != null) {
+                          if (exerciciosSelecionados != null) {
+                            var result =
+                                exerciciosSelecionados
+                                    as List<Map<String, dynamic>>;
+
+                            for (var exercicio in exerciciosSelecionados) {
+                              exercicio['intervalo'] = ValueNotifier<int>(0);
+                              exercicio['repeticoes'] = ValueNotifier<int>(0);
+                            }
                             setState(() {
-                              bodyExercicios =
-                                  novosExercicios as List<Map<String, dynamic>>;
+                              bodyExercicios = exerciciosSelecionados;
                             });
                           }
                         }),
@@ -76,10 +79,85 @@ class MontagemTreinoState extends State<MontagemTreino> {
                         child: bodyExercicios.isNotEmpty
                             ? ListView.builder(
                                 itemBuilder: (context, index) {
+                                  // Declarando as ValueNotifier para ser usado no intervalo e repeticoes
+                                  final ValueNotifier<int> intervaloCrtl =
+                                      bodyExercicios[index]['intervalo']
+                                          as ValueNotifier<int>;
+                                  final ValueNotifier<int> repeticoesCrtl =
+                                      bodyExercicios[index]['repeticoes']
+                                          as ValueNotifier<int>;
                                   return Card(
                                     child: ListTile(
+                                      minLeadingWidth: 300,
                                       title: Text(
                                         bodyExercicios[index]['nome'] as String,
+                                      ),
+                                      trailing: SizedBox(
+                                        width: 300,
+                                        child: Row(
+                                          children: [
+                                            //INTERVALO
+                                            IconButton(
+                                              onPressed: () {
+                                                if (intervaloCrtl.value > 0) {
+                                                  intervaloCrtl.value -= 1;
+                                                }
+                                              },
+                                              icon: Icon(
+                                                Icons.exposure_minus_1,
+                                              ),
+                                            ),
+
+                                            ValueListenableBuilder(
+                                              valueListenable: intervaloCrtl,
+                                              builder:
+                                                  (context, value, child) =>
+                                                      Text(
+                                                        '$value Minutos',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () {
+                                                intervaloCrtl.value += 1;
+                                              },
+                                              icon: Icon(Icons.plus_one),
+                                            ),
+                                            // REPETIÇÕES
+                                            IconButton(
+                                              onPressed: () {
+                                                if (repeticoesCrtl.value > 0) {
+                                                  repeticoesCrtl.value -= 1;
+                                                }
+                                              },
+                                              icon: Icon(
+                                                Icons.exposure_minus_1,
+                                              ),
+                                            ),
+
+                                            ValueListenableBuilder(
+                                              valueListenable: repeticoesCrtl,
+                                              builder:
+                                                  (context, value, child) =>
+                                                      Text(
+                                                        '$value repeticoes',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () {
+                                                repeticoesCrtl.value += 1;
+                                              },
+                                              icon: Icon(Icons.plus_one),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   );
