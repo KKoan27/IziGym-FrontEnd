@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:flutter/material.dart';
 import 'package:project/pages/AdicionaExercicio.dart';
 import 'package:http/http.dart' as http;
@@ -137,7 +139,6 @@ class MontagemTreinoState extends State<MontagemTreino> {
                                                 Icons.exposure_minus_1,
                                               ),
                                             ),
-
                                             ValueListenableBuilder(
                                               valueListenable: repeticoesCrtl,
                                               builder:
@@ -175,6 +176,23 @@ class MontagemTreinoState extends State<MontagemTreino> {
         ),
       ),
     );
+  }
+
+  void extrairIntervaloRepeticao(){
+
+      List<Map<String,dynamic>> dadosParaEnviar = bodyExercicios.map((ex){
+
+        int intervalo = (ex['intervalo'] as ValueNotifier<int>).value;
+        int repeticoes = (ex['repeticoes'] as ValueNotifier<int>).value;
+        return {
+          'nome' : ex['nome'],
+          'intervalo': ex['intervalo'], 
+
+        }
+}).toList();
+
+
+
   }
 
   TextField entradaDeDados(
