@@ -1,5 +1,4 @@
-import 'dart:js_interop';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:project/pages/AdicionaExercicio.dart';
 import 'package:http/http.dart' as http;
@@ -14,10 +13,34 @@ class MontagemTreino extends StatefulWidget {
 }
 
 class MontagemTreinoState extends State<MontagemTreino> {
-  String nomeTreino = "";
-  String descricaoTreino = "";
+  late TextEditingController nomeTreino;
+  late TextEditingController descricaoTreino;
+
   String? selectItem;
   List<Map<String, dynamic>> bodyExercicios = [];
+
+  @override
+  void dispose() {
+    nomeTreino.dispose();
+    descricaoTreino.dispose();
+    for (var exercicio in bodyExercicios) {
+      if (exercicio.containsKey('intervalo')) {
+        (exercicio['intervalo'] as ValueNotifier).dispose();
+      }
+      if (exercicio.containsKey('repeticoes')) {
+        (exercicio['repeticoes'] as ValueNotifier).dispose();
+      }
+    }
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    nomeTreino = TextEditingController();
+    descricaoTreino = TextEditingController();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +51,6 @@ class MontagemTreinoState extends State<MontagemTreino> {
           child: SizedBox(
             height: 400,
             width: double.infinity,
-
             child: Column(
               children: [
                 Center(
@@ -40,15 +62,13 @@ class MontagemTreinoState extends State<MontagemTreino> {
                 Expanded(
                   child: Column(
                     children: [
-                      entradaDeDados("Nome do treino", Icons.edit_sharp, (
-                        value,
-                      ) {
-                        nomeTreino = value;
-                      }),
+                      entradaDeDados(
+                        "Nome do treino",
+                        Icons.edit_sharp,
+                        nomeTreino,
+                      ),
                       SizedBox(height: 50),
-                      entradaDeDados("Descrição", Icons.list, (value) {
-                        descricaoTreino = value;
-                      }),
+                      entradaDeDados("Descrição", null, descricaoTreino),
                       ElevatedButton(
                         onPressed: (() async {
                           final exerciciosSelecionados = await Navigator.push(
@@ -165,7 +185,10 @@ class MontagemTreinoState extends State<MontagemTreino> {
                                 },
                                 itemCount: bodyExercicios.length,
                               )
-                            : Text("Selecione os exercicios"),
+                            : Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("Selecione os exercicios"),
+                              ),
                       ),
                     ],
                   ),
@@ -175,37 +198,74 @@ class MontagemTreinoState extends State<MontagemTreino> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          treinoPOST(context);
+        },
+      ),
     );
   }
 
-  void extrairIntervaloRepeticao(){
+  Future<void> treinoPOST(BuildContext context) async {
+    List<Map<String, dynamic>> exerciciosList = bodyExercicios.map((ex) {
+      int intervalo = (ex['intervalo'] as ValueNotifier<int>).value;
+      int repeticoes = (ex['repeticoes'] as ValueNotifier<int>).value;
+      return {
+        'nome': ex['nome'],
+        'repeticoes': repeticoes,
+        'intervalo': intervalo,
+      };
+    }).toList();
 
-      List<Map<String,dynamic>> dadosParaEnviar = bodyExercicios.map((ex){
+    final Map<String, dynamic> requestBody = {
+      'nome': 'TesteADM',
+      'nomeTreino': nomeTreino.text,
+      'exercicios': exerciciosList,
+    };
 
-        int intervalo = (ex['intervalo'] as ValueNotifier<int>).value;
-        int repeticoes = (ex['repeticoes'] as ValueNotifier<int>).value;
-        return {
-          'nome' : ex['nome'],
-          'intervalo': ex['intervalo'], 
+    final requestJson = jsonEncode(requestBody);
 
-        }
-}).toList();
+    try {
+      final response = await http.post(
+        Uri.parse('http://127.0.0.1:8090/treino'),
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: requestJson,
+      );
 
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        print("DEU CERTO!!");
 
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Treino criado com sucesso!")),
+        );
+      } else {
+        throw Exception("Erro na requisição, ${response.statusCode}");
+      }
+    } on Exception catch (e) {
+      print("deu ruim : $e");
 
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Erro na conexão: $e")));
+    }
   }
 
-  TextField entradaDeDados(
+  Widget entradaDeDados(
     String texto,
     IconData? icone,
-    Function(String) onChanged,
+    TextEditingController controller,
   ) {
-    return TextField(
-      cursorColor: Colors.red,
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        label: Text(texto, style: TextStyle(color: Colors.white)),
-        icon: Icon(icone),
+    return Card(
+      color: const Color.fromARGB(255, 114, 113, 113),
+      elevation: 2,
+      child: TextField(
+        style: TextStyle(color: Colors.white),
+        cursorColor: Colors.red,
+        controller: controller,
+        decoration: InputDecoration(
+          label: Text(texto, style: TextStyle(color: Colors.white)),
+          icon: Icon(icone),
+        ),
       ),
     );
   }
