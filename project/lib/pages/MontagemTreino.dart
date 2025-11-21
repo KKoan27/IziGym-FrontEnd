@@ -44,164 +44,211 @@ class MontagemTreinoState extends State<MontagemTreino> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black38,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(50.0),
-          child: SizedBox(
-            height: 400,
-            width: double.infinity,
-            child: Column(
-              children: [
-                Center(
-                  child: Text(
-                    "Criar Novo Treino",
-                    style: TextStyle(color: Colors.white),
-                  ),
+      backgroundColor: const Color.fromARGB(137, 34, 34, 34),
+      appBar: AppBar(title: Text('Cancelar'), backgroundColor: Colors.grey),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: SizedBox(
+          height: 400,
+          width: double.infinity,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                textDirection: TextDirection.ltr,
+                textAlign: TextAlign.start,
+                "Criar Novo Treino",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
                 ),
-                Expanded(
-                  child: Column(
-                    children: [
-                      entradaDeDados(
-                        "Nome do treino",
-                        Icons.edit_sharp,
-                        nomeTreino,
-                      ),
-                      SizedBox(height: 50),
-                      entradaDeDados("Descrição", null, descricaoTreino),
-                      ElevatedButton(
-                        onPressed: (() async {
-                          final exerciciosSelecionados = await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) {
-                                return AdicionaExercicio();
-                              },
+              ),
+
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          entradaDeDados(
+                            "Nome do treino",
+                            Icons.edit_sharp,
+                            nomeTreino,
+                          ),
+                          SizedBox(height: 50),
+                          entradaDeDados("Descrição", null, descricaoTreino),
+
+                          Expanded(
+                            // Linha de botões : Adicionar Exercicio, Salvar treinos
+                            child: Row(
+                              spacing: 50,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // LISTA DE EXERCICIO
+                                ElevatedButton(
+                                  onPressed: (() async {
+                                    final exerciciosSelecionados =
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return AdicionaExercicio();
+                                            },
+                                          ),
+                                        );
+
+                                    // Verifique se o usuário não voltou sem salvar
+                                    if (exerciciosSelecionados != null) {
+                                      exerciciosSelecionados
+                                          as List<Map<String, dynamic>>;
+
+                                      for (var exercicio
+                                          in exerciciosSelecionados) {
+                                        exercicio['intervalo'] =
+                                            ValueNotifier<int>(0);
+                                        exercicio['repeticoes'] =
+                                            ValueNotifier<int>(0);
+                                      }
+                                      setState(() {
+                                        bodyExercicios = exerciciosSelecionados;
+                                      });
+                                    }
+                                  }),
+
+                                  child: Text("Adicionar Exercicios"),
+                                ),
+                                // ENVIAR TREINO
+                                ElevatedButton(
+                                  onPressed: () {
+                                    treinoPOST(context);
+                                  },
+                                  child: Text("Salvar treino"),
+                                ),
+                              ],
                             ),
-                          );
+                          ),
+                          Expanded(
+                            child: bodyExercicios.isNotEmpty
+                                ? ListView.builder(
+                                    itemBuilder: (context, index) {
+                                      // Declarando as ValueNotifier para ser usado no intervalo e repeticoes
+                                      final ValueNotifier<int> intervaloCrtl =
+                                          bodyExercicios[index]['intervalo']
+                                              as ValueNotifier<int>;
+                                      final ValueNotifier<int> repeticoesCrtl =
+                                          bodyExercicios[index]['repeticoes']
+                                              as ValueNotifier<int>;
+                                      return Card(
+                                        child: ListTile(
+                                          minLeadingWidth: 300,
+                                          title: Text(
+                                            bodyExercicios[index]['nome']
+                                                as String,
+                                          ),
+                                          trailing: SizedBox(
+                                            width: 200,
+                                            child: Row(
+                                              children: [
+                                                //INTERVALO
+                                                IconButton(
+                                                  onPressed: () {
+                                                    if (intervaloCrtl.value >
+                                                        0) {
+                                                      intervaloCrtl.value -= 1;
+                                                    }
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.exposure_minus_1,
+                                                  ),
+                                                ),
 
-                          // Verifique se o usuário não voltou sem salvar
-                          if (exerciciosSelecionados != null) {
-                            var result =
-                                exerciciosSelecionados
-                                    as List<Map<String, dynamic>>;
-
-                            for (var exercicio in exerciciosSelecionados) {
-                              exercicio['intervalo'] = ValueNotifier<int>(0);
-                              exercicio['repeticoes'] = ValueNotifier<int>(0);
-                            }
-                            setState(() {
-                              bodyExercicios = exerciciosSelecionados;
-                            });
-                          }
-                        }),
-                        child: Text("Adicionar Exercicios"),
-                      ),
-                      Expanded(
-                        child: bodyExercicios.isNotEmpty
-                            ? ListView.builder(
-                                itemBuilder: (context, index) {
-                                  // Declarando as ValueNotifier para ser usado no intervalo e repeticoes
-                                  final ValueNotifier<int> intervaloCrtl =
-                                      bodyExercicios[index]['intervalo']
-                                          as ValueNotifier<int>;
-                                  final ValueNotifier<int> repeticoesCrtl =
-                                      bodyExercicios[index]['repeticoes']
-                                          as ValueNotifier<int>;
-                                  return Card(
-                                    child: ListTile(
-                                      minLeadingWidth: 300,
-                                      title: Text(
-                                        bodyExercicios[index]['nome'] as String,
-                                      ),
-                                      trailing: SizedBox(
-                                        width: 300,
-                                        child: Row(
-                                          children: [
-                                            //INTERVALO
-                                            IconButton(
-                                              onPressed: () {
-                                                if (intervaloCrtl.value > 0) {
-                                                  intervaloCrtl.value -= 1;
-                                                }
-                                              },
-                                              icon: Icon(
-                                                Icons.exposure_minus_1,
-                                              ),
-                                            ),
-
-                                            ValueListenableBuilder(
-                                              valueListenable: intervaloCrtl,
-                                              builder:
-                                                  (context, value, child) =>
-                                                      Text(
+                                                ValueListenableBuilder(
+                                                  valueListenable:
+                                                      intervaloCrtl,
+                                                  builder:
+                                                      (
+                                                        context,
+                                                        value,
+                                                        child,
+                                                      ) => Text(
                                                         '$value Minutos',
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
                                                         ),
                                                       ),
-                                            ),
-                                            IconButton(
-                                              onPressed: () {
-                                                intervaloCrtl.value += 1;
-                                              },
-                                              icon: Icon(Icons.plus_one),
-                                            ),
-                                            // REPETIÇÕES
-                                            IconButton(
-                                              onPressed: () {
-                                                if (repeticoesCrtl.value > 0) {
-                                                  repeticoesCrtl.value -= 1;
-                                                }
-                                              },
-                                              icon: Icon(
-                                                Icons.exposure_minus_1,
-                                              ),
-                                            ),
-                                            ValueListenableBuilder(
-                                              valueListenable: repeticoesCrtl,
-                                              builder:
-                                                  (context, value, child) =>
-                                                      Text(
+                                                ),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    intervaloCrtl.value += 1;
+                                                  },
+                                                  icon: Icon(Icons.plus_one),
+                                                ),
+                                                // REPETIÇÕES
+                                                IconButton(
+                                                  onPressed: () {
+                                                    if (repeticoesCrtl.value >
+                                                        0) {
+                                                      repeticoesCrtl.value -= 1;
+                                                    }
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.exposure_minus_1,
+                                                  ),
+                                                ),
+                                                ValueListenableBuilder(
+                                                  valueListenable:
+                                                      repeticoesCrtl,
+                                                  builder:
+                                                      (
+                                                        context,
+                                                        value,
+                                                        child,
+                                                      ) => Text(
                                                         '$value repeticoes',
                                                         style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
                                                         ),
                                                       ),
+                                                ),
+                                                IconButton(
+                                                  onPressed: () {
+                                                    repeticoesCrtl.value += 1;
+                                                  },
+                                                  icon: Icon(Icons.plus_one),
+                                                ),
+                                              ],
                                             ),
-                                            IconButton(
-                                              onPressed: () {
-                                                repeticoesCrtl.value += 1;
-                                              },
-                                              icon: Icon(Icons.plus_one),
-                                            ),
-                                          ],
+                                          ),
                                         ),
+                                      );
+                                    },
+                                    itemCount: bodyExercicios.length,
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      "Selecione os exercicios",
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.w400,
                                       ),
                                     ),
-                                  );
-                                },
-                                itemCount: bodyExercicios.length,
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Selecione os exercicios"),
-                              ),
+                                  ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          treinoPOST(context);
-        },
       ),
     );
   }
@@ -233,17 +280,14 @@ class MontagemTreinoState extends State<MontagemTreino> {
       );
 
       if (response.statusCode == 201 || response.statusCode == 200) {
-        print("DEU CERTO!!");
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Treino criado com sucesso!")),
         );
+        Navigator.pushNamed(context, '/homepage');
       } else {
         throw Exception("Erro na requisição, ${response.statusCode}");
       }
     } on Exception catch (e) {
-      print("deu ruim : $e");
-
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Erro na conexão: $e")));
@@ -256,14 +300,14 @@ class MontagemTreinoState extends State<MontagemTreino> {
     TextEditingController controller,
   ) {
     return Card(
-      color: const Color.fromARGB(255, 114, 113, 113),
+      color: const Color.fromARGB(255, 255, 255, 255),
       elevation: 2,
       child: TextField(
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.black),
         cursorColor: Colors.red,
         controller: controller,
         decoration: InputDecoration(
-          label: Text(texto, style: TextStyle(color: Colors.white)),
+          label: Text(texto, style: TextStyle(color: Colors.black)),
           icon: Icon(icone),
         ),
       ),
