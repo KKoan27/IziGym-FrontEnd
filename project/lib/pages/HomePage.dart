@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:project/pages/MontagemTreino.dart';
+import 'package:project/pages/treinoPage.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   State<StatefulWidget> createState() => HomePageState();
 }
@@ -44,7 +47,7 @@ class HomePageState extends State<HomePage> {
           ),
         ));
       case 1:
-        return Center(child: Container(child: MontagemTreino()));
+        return Center(child: TreinoPage());
       case 2:
         return Center(
           child: Container(
