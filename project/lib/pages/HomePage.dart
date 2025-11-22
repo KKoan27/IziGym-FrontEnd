@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:project/pages/MontagemTreino.dart';
+import 'package:project/pages/treinoPage.dart';
 import 'package:project/pages/lista_exercicios_page.dart';
-import 'package:project/pages/treinos.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,7 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  int locale = 0;
+  int locale = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,7 @@ class HomePageState extends State<HomePage> {
       case 0:
         return const ListaExerciciosPage();
       case 1:
-        return Center(child: MontagemTreino());
+        return Center(child: TreinoPage());
       case 2:
         return const Center(
           child: Text("Perfil", style: TextStyle(color: Colors.white)),
