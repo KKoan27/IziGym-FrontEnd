@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:project/pages/MontagemTreino.dart';
 import 'package:project/pages/treinoPage.dart';
+import 'package:project/pages/lista_exercicios_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -41,27 +42,16 @@ class HomePageState extends State<HomePage> {
   Widget selectItem(int index) {
     switch (index) {
       case 0:
-        return (Center(
-          child: Container(
-            child: Text("Exercicios", style: TextStyle(color: Colors.white)),
-          ),
-        ));
+        return const ListaExerciciosPage();
       case 1:
         return Center(child: TreinoPage());
       case 2:
-        return Center(
-          child: Container(
-            child: Text("Perfil", style: TextStyle(color: Colors.white)),
-          ),
+        return const Center(
+          child: Text("Perfil", style: TextStyle(color: Colors.white)),
         );
       default:
-        return Center(
-          child: Container(
-            child: Text(
-              "Nao foi em nada",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
+        return const Center(
+          child: Text("Nao foi em nada", style: TextStyle(color: Colors.white)),
         );
     }
   }
