@@ -1,30 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:project/pages/login.dart';
-
-import 'pages/HomePage.dart';
+import 'package:project/pages/AdicionaExercicio.dart';
+import 'package:project/pages/HomePage.dart';
+import 'package:project/pages/MontagemTreino.dart';
 
 void main() {
-
-IziGymLoginApp loginscreen = IziGymLoginApp();
-  runApp(loginscreen);
-}
-
-class AppWidget extends StatelessWidget {
-  final String title;
-
-  const AppWidget({super.key, required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: Colors.amber,
-      child: Center(
-        child: Text(
-          title,
-          textDirection: TextDirection.ltr,
-          style: TextStyle(color: Colors.black, fontSize: 50),
-        ),
+  runApp(
+    MaterialApp(
+      themeMode: ThemeMode.dark,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.red[900]!),
       ),
-    );
-  }
+      routes: {
+        // '/loginpage': (context) => LoginPage,
+        '/homepage': (context) => HomePage(),
+        '/addtreino': (context) => MontagemTreino(),
+        '/selectexercicio': (context) => AdicionaExercicio(),
+      },
+      initialRoute: '/homepage',
+      debugShowCheckedModeBanner: false,
+    ),
+  );
 }
