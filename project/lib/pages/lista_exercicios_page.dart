@@ -11,56 +11,47 @@ class ListaExerciciosPage extends StatefulWidget {
 }
 
 class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
-  // Instancia o serviço
   final ExercicioService _exercicioService = ExercicioService();
-
-  // 'late' indica que vamos inicializar essa variável antes de usá-la
   late Future<List<Exercicio>> _futureExercicios;
 
   @override
   void initState() {
     super.initState();
-    // Inicia a busca pelos dados assim que a tela é construída
     _futureExercicios = _exercicioService.fetchExercicios();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.transparent, // Fundos já vêm da HomePage
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Exercícios",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.black,
-        // que pode chamar _exercicioService.fetchExercicios(query: 'novaQuery')
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: FutureBuilder<List<Exercicio>>(
         future: _futureExercicios,
         builder: (context, snapshot) {
-          // 1. Enquanto está carregando
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFFE50000), // Vermelho IziGym
-              ),
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xFFE50000)),
             );
           }
 
-          // 2. Se deu erro
           if (snapshot.hasError) {
             return Center(
               child: Text(
-                'Erro ao carregar dados: ${snapshot.error}',
+                'Erro ao carregar dados.',
                 style: TextStyle(color: Colors.white),
               ),
             );
           }
 
-          // 3. Se os dados chegaram, mas estão vazios
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
+            return const Center(
               child: Text(
                 'Nenhum exercício encontrado.',
                 style: TextStyle(color: Colors.white70),
@@ -68,46 +59,113 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
             );
           }
 
-          // 4. Se tudo deu certo, exibe a lista!
           final exercicios = snapshot.data!;
 
-          return ListView.builder(
+          return ListView.separated(
+            padding: const EdgeInsets.all(16),
             itemCount: exercicios.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 16),
             itemBuilder: (context, index) {
               final exercicio = exercicios[index];
-              return Card(
-                color: Color(0xFF1C1C1C),
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: ListTile(
-                  // usa o exercicio.gifUrl para mostrar uma miniatura
-                  // leading: Image.network(exercicio.gifUrl, width: 50, height: 50),
-                  title: Text(
-                    exercicio.nome,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    exercicio.musculosAlvo.join(', '),
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                  trailing: Icon(Icons.chevron_right, color: Color(0xFFE50000)),
-                  onTap: () {
-                    // AÇÃO: Navegar para a tela de detalhes do exercício
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            DetalheExercicioPage(exercicio: exercicio),
-                      ),
-                    );
-                  },
-                ),
-              );
+              return _buildExercicioCard(context, exercicio);
             },
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildExercicioCard(BuildContext context, Exercicio exercicio) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetalheExercicioPage(exercicio: exercicio),
+          ),
+        );
+      },
+      child: Container(
+        height: 100,
+        decoration: BoxDecoration(
+          color: const Color(0xFF2C2C2C),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            // 1. Imagem/GIF à Esquerda
+            ClipRRect(
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(12),
+                bottomLeft: Radius.circular(12),
+              ),
+              child: SizedBox(
+                width: 120,
+                height: double.infinity,
+                child: exercicio.gifUrl.isNotEmpty
+                    ? Image.network(
+                        exercicio.gifUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                              Icons.image_not_supported,
+                              color: Colors.white24,
+                            ),
+                      )
+                    : const Icon(
+                        Icons.fitness_center,
+                        color: Colors.white24,
+                        size: 40,
+                      ),
+              ),
+            ),
+
+            // 2. Informações no Centro
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      exercicio.nome,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      exercicio.musculosAlvo.isNotEmpty
+                          ? exercicio.musculosAlvo.join(", ")
+                          : "Geral",
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // 3. Ícone indicativo à direita
+            Padding(
+              padding: const EdgeInsets.only(right: 15),
+              child: Icon(
+                Icons.arrow_forward_ios,
+                color: Color(0xFFE50000),
+                size: 16,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
