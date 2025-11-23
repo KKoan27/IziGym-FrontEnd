@@ -11,32 +11,100 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  int locale = 1;
+  int locale = 0; // Alterei para 0 para iniciar na lista de exercícios
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return (Scaffold(
+    return Scaffold(
       body: selectItem(locale),
       backgroundColor: const Color.fromARGB(255, 43, 42, 42),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color.fromARGB(255, 100, 100, 100),
+        backgroundColor: const Color.fromARGB(
+          255,
+          28,
+          28,
+          28,
+        ), // Fundo mais escuro
         currentIndex: locale,
-        selectedItemColor: const Color.fromARGB(255, 170, 45, 36),
-
+        selectedItemColor: const Color(0xFFE50000), // Vermelho IziGym
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
         onTap: (value) => setState(() {
           locale = value;
         }),
         items: [
-          BottomNavigationBarItem(icon: Text("💪"), label: "Exercicios"),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt_rounded),
-            label: "Treino",
+            // Ícone padrão (Inativo)
+            icon: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'assets/IconMusculo.png',
+                width: 24,
+                height: 24,
+                color: Colors.grey,
+              ),
+            ),
+            // Ícone Ativo (Com Zoom)
+            activeIcon: Transform.scale(
+              scale: 1.5,
+              child: Image.asset(
+                'assets/IconMusculo.png',
+                width: 24,
+                height: 24,
+                color: const Color(0xFFE50000),
+              ),
+            ),
+            label: "Exercícios",
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
+          BottomNavigationBarItem(
+            // Ícone padrão (Inativo)
+            icon: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'assets/IconPrancheta.png',
+                width: 24,
+                height: 24,
+                color: Colors.grey,
+              ),
+            ),
+            // Ícone Ativo (Com Zoom)
+            activeIcon: Transform.scale(
+              scale: 1.5,
+              child: Image.asset(
+                'assets/IconPrancheta.png',
+                width: 24,
+                height: 24,
+                color: const Color(0xFFE50000),
+              ),
+            ),
+            label: "Treinos",
+          ),
+          BottomNavigationBarItem(
+            // Ícone padrão (Inativo)
+            icon: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'assets/IconPerfil.png',
+                width: 24,
+                height: 24,
+                color: Colors.grey,
+              ),
+            ),
+            // Ícone Ativo (Com Zoom)
+            activeIcon: Transform.scale(
+              scale: 1.5,
+              child: Image.asset(
+                'assets/IconPerfil.png',
+                width: 24,
+                height: 24,
+                color: const Color(0xFFE50000),
+              ),
+            ),
+            label: "Perfil",
+          ),
         ],
       ),
-    ));
+    );
   }
 
   Widget selectItem(int index) {
@@ -44,14 +112,14 @@ class HomePageState extends State<HomePage> {
       case 0:
         return const ListaExerciciosPage();
       case 1:
-        return Center(child: TreinoPage());
+        return const TreinoPage(); // Removi o Center para usar a página inteira
       case 2:
         return const Center(
           child: Text("Perfil", style: TextStyle(color: Colors.white)),
         );
       default:
         return const Center(
-          child: Text("Nao foi em nada", style: TextStyle(color: Colors.white)),
+          child: Text("Erro", style: TextStyle(color: Colors.white)),
         );
     }
   }
