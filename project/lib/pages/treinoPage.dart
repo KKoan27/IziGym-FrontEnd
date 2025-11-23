@@ -37,7 +37,7 @@ class _TreinoPageState extends State<TreinoPage> {
             elevation: 4,
             margin: EdgeInsets.only(bottom: 16),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -47,20 +47,20 @@ class _TreinoPageState extends State<TreinoPage> {
                   Text(
                     treino.titulo,
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   SizedBox(height: 4),
                   Text(
                     treino.nome,
-                    style: TextStyle(fontSize: 15),
+                    style: TextStyle(fontSize: 16),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 10),
                   Text(
                     treino.detalhes,
                     style: TextStyle(
-                      fontSize: 13,
+                      fontSize: 14,
                       color: Colors.grey[700],
                     ),
                   ),
@@ -109,7 +109,7 @@ class _TreinoPageState extends State<TreinoPage> {
 //             Card(
 //               elevation: 4,
 //               shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(12),
+//                 borderRadius: BorderRadius.circular(8),
 //               ),
 //               child: Padding(
 //                 padding: const EdgeInsets.all(16.0),
