@@ -110,16 +110,19 @@ class HomePageState extends State<HomePage> {
   Widget selectItem(int index) {
     switch (index) {
       case 0:
-        return const ListaExerciciosPage();
+        return const ListaExerciciosPage(); // Página de Exercícios
       case 1:
-        return const TreinoPage(); // Removi o Center para usar a página inteira
+        return const TreinoPage(); // Página de Treinos
       case 2:
         return const Center(
-          child: Text("Perfil", style: TextStyle(color: Colors.white)),
+          child: Text(
+            "Perfil",
+            style: TextStyle(color: Colors.white),
+          ), // Página de Perfil
         );
       default:
         return const Center(
-          child: Text("Erro", style: TextStyle(color: Colors.white)),
+          child: Text("Erro", style: TextStyle(color: Colors.white)), // Erro
         );
     }
   }

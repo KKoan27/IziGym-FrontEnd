@@ -22,17 +22,24 @@ class Exercicio {
 
   factory Exercicio.fromJson(Map<String, dynamic> json) {
     return Exercicio(
+      //  Uso de '??' (operador de coalescência nula).
+      // Se o campo "_id" vier nulo da API, usamos '' string vazia para o app não quebrar.
       id: json["_id"] ?? '',
+
       nome: json["nome"] ?? 'Sem nome',
+
       descricao: json["descricao"] ?? 'Sem descrição disponível.',
-      // Conversão segura: Se for null, usa []. Se não for lista de strings, converte.
+
+      // [SEGURANÇA] Conversão robusta de Listas.
+      // Se vier null (as List?), fazemos map para String. Se falhar, retorna lista vazia [].
       musculosAlvo:
           (json["musculosAlvo"] as List?)
               ?.map((item) => item.toString())
               .toList() ??
           [],
+
       gifUrl: json["execucao"] ?? '',
-      // Conversão segura para dicas também
+
       dicas:
           (json["dicas"] as List?)?.map((item) => item.toString()).toList() ??
           [],

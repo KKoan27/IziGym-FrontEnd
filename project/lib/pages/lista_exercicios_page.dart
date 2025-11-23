@@ -7,17 +7,45 @@ class ListaExerciciosPage extends StatefulWidget {
   const ListaExerciciosPage({super.key});
 
   @override
+  // Usei StatefulWidget pois a lista precisa ser atualizada
+  // dinamicamente quando o usuário faz uma pesquisa.
   State<ListaExerciciosPage> createState() => _ListaExerciciosPageState();
 }
 
 class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
   final ExercicioService _exercicioService = ExercicioService();
+
+  // [TÉCNICO] Variável que guarda o estado da promessa (Future).
+  // Armazeno o Future numa variável para evitar que a requisição
+  // seja refeita toda vez que o teclado abre ou a tela recarrega (build).
   late Future<List<Exercicio>> _futureExercicios;
+
+  // [TÉCNICO] Controlador para ler o texto do input de busca.
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    // [TÉCNICO] Carrega a lista completa ao iniciar a tela.
     _futureExercicios = _exercicioService.fetchExercicios();
+  }
+
+  @override
+  void dispose() {
+    // [BOAS PRÁTICAS] Limpar o controller da memória evita memory leaks.
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // [DICA DE EXERCÍCIO] O professor pode pedir para mudar a lógica da busca.
+  void _realizarPesquisa() {
+    setState(() {
+      // [TÉCNICO] Ao mudar o _futureExercicios dentro do setState,
+      // forçamos o FutureBuilder a rodar de novo com o novo parâmetro (query).
+      _futureExercicios = _exercicioService.fetchExercicios(
+        query: _searchController.text,
+      );
+    });
   }
 
   @override
@@ -25,31 +53,67 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text(
-          "Exercícios",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
         backgroundColor: Colors.black,
-        iconTheme: const IconThemeData(color: Colors.white),
+        // [LAYOUT] Campo de busca customizado no AppBar
+        title: Container(
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          // O onChanged fica aqui, sozinho.
+          // Adicionei o onChanged para que a pesquisa aconteça em tempo real.
+          child: TextField(
+            controller: _searchController,
+            onChanged: (value) {
+              _realizarPesquisa();
+            },
+            // O decoration é uma propriedade do TextField, fica fora do onChanged
+            decoration: const InputDecoration(
+              hintText: "Pesquisar exercícios...",
+              border: InputBorder.none,
+              prefixIcon: Icon(Icons.search, color: Colors.grey),
+              contentPadding: EdgeInsets.symmetric(vertical: 10),
+            ),
+
+            // [UX] Pesquisa ao apertar "Enter" no teclado
+            // O onSubmitted também é irmão, fica fora
+            onSubmitted: (_) => _realizarPesquisa(),
+          ),
+        ),
+        actions: [
+          // [UX] Botão explícito de pesquisa
+          IconButton(
+            icon: const Icon(Icons.search, color: Colors.white),
+            onPressed: _realizarPesquisa,
+          ),
+        ],
       ),
+
+      // O FutureBuilder é essencial para chamadas de API, pois gerencia
+      // os 3 estados da requisição: Carregando, Erro e Sucesso.
       body: FutureBuilder<List<Exercicio>>(
         future: _futureExercicios,
         builder: (context, snapshot) {
+          // 1. ESTADO DE CARREGAMENTO
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(color: Color(0xFFE50000)),
             );
           }
 
+          // 2. ESTADO DE ERRO
+          // aqui trata o erros de internet
           if (snapshot.hasError) {
             return Center(
               child: Text(
-                'Erro ao carregar dados.',
+                'Erro ao carregar dados.', // Pode adicionar: ${snapshot.error} para debugar
                 style: TextStyle(color: Colors.white),
               ),
             );
           }
 
+          // 3. ESTADO VAZIO (Sucesso mas sem dados)
           if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(
               child: Text(
@@ -59,8 +123,11 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
             );
           }
 
+          // 4. SUCESSO
           final exercicios = snapshot.data!;
 
+          // [PERFORMANCE] ListView.separated é melhor que ListView padrão para listas grandes
+          // pois renderiza apenas o que está na tela.
           return ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: exercicios.length,
@@ -75,8 +142,10 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
     );
   }
 
+  // [BOAS PRÁTICAS] Método extraído para deixar o build mais limpo
   Widget _buildExercicioCard(BuildContext context, Exercicio exercicio) {
     return GestureDetector(
+      // [NAVEGAÇÃO] Passagem de parâmetro (objeto exercicio) para a próxima tela
       onTap: () {
         Navigator.push(
           context,
@@ -93,7 +162,7 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
         ),
         child: Row(
           children: [
-            // 1. Imagem/GIF à Esquerda
+            // Lado Esquerdo: Imagem
             ClipRRect(
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(12),
@@ -102,6 +171,7 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
               child: SizedBox(
                 width: 120,
                 height: double.infinity,
+                // Tratamento de imagem quebrada/vazia
                 child: exercicio.gifUrl.isNotEmpty
                     ? Image.network(
                         exercicio.gifUrl,
@@ -120,7 +190,7 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
               ),
             ),
 
-            // 2. Informações no Centro
+            // Centro: Textos
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(
@@ -139,7 +209,8 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
                         fontWeight: FontWeight.bold,
                       ),
                       maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      overflow:
+                          TextOverflow.ellipsis, // Corta texto longo com "..."
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -155,7 +226,7 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
               ),
             ),
 
-            // 3. Ícone indicativo à direita
+            // Direita: Ícone
             Padding(
               padding: const EdgeInsets.only(right: 15),
               child: Icon(
