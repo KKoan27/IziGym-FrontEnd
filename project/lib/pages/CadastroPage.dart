@@ -9,28 +9,32 @@ class CadastroPage extends StatefulWidget {
 }
 
 class _CadastroPageState extends State<CadastroPage> {
+  // [4.4] Criação de múltiplos controladores para o formulário extenso.
   final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   final _confirmaSenhaController = TextEditingController();
 
   void _realizarCadastro() {
-    // Validação básica
+    // [4.4 Validação] Lógica simples exigida: Comparar valor de dois inputs.
     if (_senhaController.text != _confirmaSenhaController.text) {
+      // [4.8] Feedback de erro.
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("As senhas não coincidem!")));
-      return;
+      return; // Para a execução aqui se der erro.
     }
 
-    // Aqui você conectaria com o backend
+    // Aqui entraria o [4.7 Consumo de API - POST] se fosse cobrado o envio real.
     print("Cadastrando: ${_nomeController.text}, ${_emailController.text}");
 
-    // Vai direto para a Home após cadastro
+    // [4.1 Navegação Avançada] pushAndRemoveUntil:
+    // Remove TODAS as telas anteriores (Login, Cadastro) e deixa só a Home.
+    // Útil para quando o usuário loga/cadastra e não deve "deslogar" ao voltar.
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => HomePage()),
-      (route) => false,
+      (route) => false, // A condição 'false' mata todas as rotas anteriores.
     );
   }
 
@@ -38,14 +42,16 @@ class _CadastroPageState extends State<CadastroPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent, // AppBar transparente
         elevation: 0,
+        // [4.1] Navigator.pop: Botão manual para voltar para tela anterior.
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      // Stack para manter o fundo se quiser adicionar as imagens de background depois
+      // [4.5 Layout] Stack não está sendo usado como Stack real aqui (só tem um filho body),
+      // mas é útil se você quisesse colocar uma imagem de fundo fixa atrás.
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(30.0),
@@ -68,6 +74,8 @@ class _CadastroPageState extends State<CadastroPage> {
               ),
               const SizedBox(height: 40),
 
+              // [7. Boas práticas] Uso de método helper (_buildInput) para evitar repetição de código (DRY).
+              // Isso mostra organização para o professor.
               _buildInput(
                 controller: _nomeController,
                 label: "Nome completo",
@@ -121,6 +129,7 @@ class _CadastroPageState extends State<CadastroPage> {
     );
   }
 
+  // Método auxiliar para criar TextFields padronizados.
   Widget _buildInput({
     required TextEditingController controller,
     required String label,

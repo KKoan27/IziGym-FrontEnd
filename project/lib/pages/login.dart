@@ -3,6 +3,7 @@ import 'ResetarSenhaPage.dart';
 import 'CadastroPage.dart';
 import 'HomePage.dart';
 
+// [4.2 Estado] StatefulWidget é necessário pois temos controllers e o estado da tela pode mudar (ex: validar campos).
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -11,21 +12,24 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // Controladores para ler o que foi digitado nos campos
+  // [4.4 Formulários] Controladores: Essenciais para ler e limpar o texto dos TextFields.
+  // Mantenha-os 'final' se não for reatribuir a variável.
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
 
   void _fazerLogin() {
-    // Validação simples: verifica se os campos não estão vazios
+    // [4.4 Formulários] Validação básica manual (verifica se string não é vazia).
     if (_emailController.text.isNotEmpty && _senhaController.text.isNotEmpty) {
-      // pushReplacement: Troca a tela atual pela nova.
-      // O usuário NÃO consegue voltar para o login apertando "voltar".
+      // [4.1 Navegação] PushReplacement: IMPORTANTE PARA PROVA.
+      // Destrói a tela de Login e coloca a Home no lugar.
+      // Isso impede que o botão "Voltar" (Back) retorne para o login.
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const HomePage()),
       );
     } else {
-      // Mostra um aviso rodapé (SnackBar) se faltar dados
+      // [4.8 Feedback] SnackBar: Aviso visual rápido exigido no ponto 4.3 e 4.8.
+      // ScaffoldMessenger é a forma correta de chamar SnackBars nas versões novas do Flutter.
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Preencha e-mail e senha!")));
@@ -34,11 +38,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Layout básico com Padding para não colar nas bordas
+    // [4.5 Layout] Scaffold fornece a estrutura padrão (appBar, body, etc).
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          // Permite rolar se a tela for pequena
+          // [4.5 Layout] SingleChildScrollView com Padding evita erro de pixel overflow
+          // quando o teclado sobe em telas pequenas.
           padding: const EdgeInsets.all(30.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -47,6 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Image.asset(
                 'assets/logo.png',
                 height: 220,
+                // Tratamento de erro caso a imagem não carregue (Boa prática).
                 errorBuilder: (_, __, ___) =>
                     const Icon(Icons.lock_reset, size: 100, color: Colors.red),
               ),
@@ -61,11 +67,12 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 30),
 
-              // Campos de texto
+              // [4.4 Formulários] TextField conectado ao controller.
               TextField(
-                controller: _emailController,
+                controller: _emailController, // Liga o input à variável
                 decoration: const InputDecoration(
                   hintText: 'E-mail',
+                  // Estilização com ícones (4.8 Temas/estilo).
                   prefixIcon: Icon(
                     Icons.alternate_email,
                     color: Color(0xFFE50000),
@@ -75,7 +82,8 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
               TextField(
                 controller: _senhaController,
-                obscureText: true, // Esconde a senha (bolinhas)
+                obscureText:
+                    true, // [4.4] Propriedade essencial para senhas (bolinhas).
                 decoration: const InputDecoration(
                   hintText: 'Senha',
                   prefixIcon: Icon(
@@ -87,12 +95,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 30),
 
-              // Botão Entrar
+              // [4.3 Interação] Botão principal.
               ElevatedButton(
-                onPressed: _fazerLogin,
+                onPressed: _fazerLogin, // Chama a função criada acima.
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFE50000),
-                  minimumSize: const Size(double.infinity, 50), // Largura total
+                  backgroundColor: const Color(0xFFE50000), // Cor personalizada
+                  minimumSize: const Size(
+                    double.infinity,
+                    50,
+                  ), // Largura total (Expanded/Stretch)
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -105,10 +116,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 20),
 
-              // Links de texto (GestureDetector torna o texto clicável)
+              // [4.3 Gestos] GestureDetector: Transforma qualquer widget (Text, Container, Image) em um botão.
+              // Ponto essencial da prova sobre "Adicionar gesto em widget específico".
               GestureDetector(
                 onTap: () {
-                  // Navegação normal (push): O usuário pode voltar para o login
+                  // [4.1 Navegação] Navigator.push: Empilha a tela nova.
+                  // O botão "Voltar" funcionará para retornar ao Login.
                   Navigator.push(
                     context,
                     MaterialPageRoute(
