@@ -1,7 +1,24 @@
 import 'dart:convert';
 
-List<Exercicio> exercicioFromJson(String str) =>
-    List<Exercicio>.from(json.decode(str).map((x) => Exercicio.fromJson(x)));
+List<Exercicio> exercicioFromJson(String str) {
+  final decoded = json.decode(str);
+
+  // BLINDAGEM: Verifica se é um Mapa (formato antigo ou erro) ou Lista (novo)
+  if (decoded is Map<String, dynamic>) {
+    // Se tiver a chave 'response', usa ela. Senão, retorna lista vazia para não quebrar.
+    if (decoded.containsKey('response')) {
+      return List<Exercicio>.from(
+        (decoded['response'] as List).map((x) => Exercicio.fromJson(x)),
+      );
+    }
+    return []; // Retorna vazio se for um objeto desconhecido
+  } else if (decoded is List) {
+    // Formato novo (Lista direta)
+    return List<Exercicio>.from(decoded.map((x) => Exercicio.fromJson(x)));
+  } else {
+    return [];
+  }
+}
 
 class Exercicio {
   final String id;
@@ -29,9 +46,8 @@ class Exercicio {
       nome: json["nome"] ?? 'Sem nome',
 
       descricao: json["descricao"] ?? 'Sem descrição disponível.',
-
-      // [SEGURANÇA] Conversão robusta de Listas.
-      // Se vier null (as List?), fazemos map para String. Se falhar, retorna lista vazia [].
+      //  Uso de '??' (operador de coalescência nula).
+      // Se o campo "_id" vier nulo da API, usamos '' string vazia para o app não quebrar.
       musculosAlvo:
           (json["musculosAlvo"] as List?)
               ?.map((item) => item.toString())
@@ -39,7 +55,7 @@ class Exercicio {
           [],
 
       gifUrl: json["execucao"] ?? '',
-
+      // Conversão segura para dicas também
       dicas:
           (json["dicas"] as List?)?.map((item) => item.toString()).toList() ??
           [],

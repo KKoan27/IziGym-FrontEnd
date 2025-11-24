@@ -115,11 +115,8 @@ class HomePageState extends State<HomePage> {
         return const TreinoPage(); // Página de Treinos
       case 2:
         return const Center(
-          child: Text(
-            "Perfil",
-            style: TextStyle(color: Colors.white),
-          ), // Página de Perfil
-        );
+          child: Text("Perfil", style: TextStyle(color: Colors.white)),
+        ); // Página de Perfil
       default:
         return const Center(
           child: Text("Erro", style: TextStyle(color: Colors.white)), // Erro

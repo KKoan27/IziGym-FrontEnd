@@ -107,7 +107,7 @@ class _ListaExerciciosPageState extends State<ListaExerciciosPage> {
           if (snapshot.hasError) {
             return Center(
               child: Text(
-                'Erro ao carregar dados.', // Pode adicionar: ${snapshot.error} para debugar
+                'Erro ao carregar dados. ${snapshot.error}', // Pode adicionar: ${snapshot.error} para debugar
                 style: TextStyle(color: Colors.white),
               ),
             );
