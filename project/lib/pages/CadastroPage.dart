@@ -151,7 +151,7 @@ class _CadastroPageState extends State<CadastroPage> {
 
     try {
       var result = await http.post(
-        Uri.parse("https://izigym-backend.globeapp.dev/user?op=authuser"),
+        Uri.parse("https://izigym-backend.globeapp.dev/user?op=register"),
         body: jsonEncode(requestbody),
         headers: {'Content-Type': 'application/json'},
       );
