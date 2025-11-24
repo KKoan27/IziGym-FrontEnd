@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:project/pages/login.dart';
 import 'HomePage.dart';
+import 'package:http/http.dart' as http;
 
 class CadastroPage extends StatefulWidget {
   const CadastroPage({super.key});
@@ -14,7 +18,7 @@ class _CadastroPageState extends State<CadastroPage> {
   final _senhaController = TextEditingController();
   final _confirmaSenhaController = TextEditingController();
 
-  void _realizarCadastro() {
+  void _realizarCadastro() async {
     // Validação básica
     if (_senhaController.text != _confirmaSenhaController.text) {
       ScaffoldMessenger.of(
@@ -24,14 +28,14 @@ class _CadastroPageState extends State<CadastroPage> {
     }
 
     // Aqui você conectaria com o backend
-    print("Cadastrando: ${_nomeController.text}, ${_emailController.text}");
+    // print("Cadastrando: ${_nomeController.text}, ${_emailController.text}");
+    var result = await register({
+      'nome': _nomeController.text,
+      'email': _emailController.text,
+      'senha': _senhaController.text,
+    }, context);
 
     // Vai direto para a Home após cadastro
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage()),
-      (route) => false,
-    );
   }
 
   @override
@@ -136,5 +140,42 @@ class _CadastroPageState extends State<CadastroPage> {
         prefixIcon: Icon(icon, color: const Color(0xFFE50000)),
       ),
     );
+  }
+
+  Future<void> register(Map<String, String> body, BuildContext context) async {
+    Map<String, String?> requestbody = {
+      "nome": body['nome'],
+      "email": body['email'],
+      "senha": body['senha'],
+    };
+
+    try {
+      var result = await http.post(
+        Uri.parse("http://127.0.0.1:8090/user?op=register"),
+        body: jsonEncode(requestbody),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      print(result.body);
+      print(result.statusCode);
+      if (result.statusCode == 400) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Erro ao cadastrar!")));
+        throw Exception("erro na requisição : ${result.body}");
+      } else if (result.statusCode == 200) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Cadastro completo!")));
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+          (route) => false,
+        );
+      }
+    } on Exception catch (e) {
+      rethrow;
+    }
   }
 }
