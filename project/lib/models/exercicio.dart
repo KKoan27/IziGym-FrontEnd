@@ -1,4 +1,3 @@
-// Define como são os dados
 import 'dart:convert';
 
 List<Exercicio> exercicioFromJson(String str) =>

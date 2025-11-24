@@ -1,9 +1,8 @@
-// Define como buscar os dados
 import 'package:http/http.dart' as http;
 import 'package:project/models/exercicio.dart';
 
 class ExercicioService {
-  final String _baseUrl = "https://izigym-backend.globeapp.dev";
+  final String _baseUrl = "https://izigym-backend-ld8brdh-kkoan27.globeapp.dev";
 
   // [ORAL] "O método fetchExercicios aceita um parâmetro opcional 'query'.
   // Isso permite reutilizar a mesma função tanto para listar tudo quanto para filtrar."
