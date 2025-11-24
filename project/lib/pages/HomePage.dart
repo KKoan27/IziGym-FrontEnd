@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'treinos.dart'; // Importa a tela de criar treino
+import 'package:project/pages/MontagemTreino.dart';
+import 'package:project/pages/treinoPage.dart';
+import 'package:project/pages/lista_exercicios_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

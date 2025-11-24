@@ -1,21 +1,14 @@
 import 'package:flutter/material.dart';
 import 'pages/login.dart'; // Importa a tela de login para ser a primeira a aparecer
+import 'package:project/pages/AdicionaExercicio.dart';
+import 'package:project/pages/HomePage.dart';
+import 'package:project/pages/MontagemTreino.dart';
 
 // A função main() é onde tudo começa. O Flutter busca essa função para iniciar o app.
 void main() {
-  runApp(const IziGymApp());
-}
-
-// Este widget representa o Aplicativo como um todo.
-class IziGymApp extends StatelessWidget {
-  const IziGymApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'IziGym App',
-      debugShowCheckedModeBanner: false, // Remove a faixa "DEBUG" do canto
-      // O ThemeData define o estilo global. Mudando aqui, muda no app todo.
+  runApp(
+    MaterialApp(
+      themeMode: ThemeMode.dark,
       theme: ThemeData(
         brightness: Brightness.dark, // Define que o app é escuro (Dark Mode)
         scaffoldBackgroundColor: Colors.black, // Fundo padrão das telas
@@ -50,4 +43,14 @@ class IziGymApp extends StatelessWidget {
       home: const LoginScreen(),
     );
   }
+      routes: {
+        // '/loginpage': (context) => LoginPage,
+        '/homepage': (context) => HomePage(),
+        '/addtreino': (context) => MontagemTreino(),
+        '/selectexercicio': (context) => AdicionaExercicio(),
+      },
+      initialRoute: '/homepage',
+      debugShowCheckedModeBanner: false,
+    ),
+  );
 }
