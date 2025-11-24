@@ -19,31 +19,92 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // O body muda dependendo do índice selecionado
       body: _selecionarTela(_indiceAtual),
-
-      // Barra de navegação inferior
+      backgroundColor: const Color.fromARGB(255, 43, 42, 42),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color(0xFF1C1C1C), // Fundo cinza escuro
-        currentIndex: _indiceAtual, // Diz à barra qual ícone deve brilhar
-        selectedItemColor: const Color(0xFFE50000), // Cor do ícone ativo
-        unselectedItemColor: Colors.grey, // Cor dos ícones inativos
-        // Função chamada quando clica em um ícone
-        onTap: (novoIndice) {
-          setState(() {
-            _indiceAtual = novoIndice; // Atualiza a variável e redesenha a tela
-          });
-        },
-        items: const [
+        backgroundColor: const Color.fromARGB(
+          255,
+          28,
+          28,
+          28,
+        ), // Fundo mais escuro
+        currentIndex: _indiceAtual,
+        selectedItemColor: const Color(0xFFE50000), // Vermelho IziGym
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
+        onTap: (value) => setState(() {
+          _indiceAtual = value;
+        }),
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.fitness_center),
+            // Ícone padrão (Inativo)
+            icon: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'assets/IconMusculo.png',
+                width: 24,
+                height: 24,
+                color: Colors.grey,
+              ),
+            ),
+            // Ícone Ativo (Com Zoom)
+            activeIcon: Transform.scale(
+              scale: 1.5,
+              child: Image.asset(
+                'assets/IconMusculo.png',
+                width: 24,
+                height: 24,
+                color: const Color(0xFFE50000),
+              ),
+            ),
             label: "Exercícios",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.add_circle_outline),
-            label: "Criar Treino",
+            // Ícone padrão (Inativo)
+            icon: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'assets/IconPrancheta.png',
+                width: 24,
+                height: 24,
+                color: Colors.grey,
+              ),
+            ),
+            // Ícone Ativo (Com Zoom)
+            activeIcon: Transform.scale(
+              scale: 1.5,
+              child: Image.asset(
+                'assets/IconPrancheta.png',
+                width: 24,
+                height: 24,
+                color: const Color(0xFFE50000),
+              ),
+            ),
+            label: "Treinos",
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
+          BottomNavigationBarItem(
+            // Ícone padrão (Inativo)
+            icon: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'assets/IconPerfil.png',
+                width: 24,
+                height: 24,
+                color: Colors.grey,
+              ),
+            ),
+            // Ícone Ativo (Com Zoom)
+            activeIcon: Transform.scale(
+              scale: 1.5,
+              child: Image.asset(
+                'assets/IconPerfil.png',
+                width: 24,
+                height: 24,
+                color: const Color(0xFFE50000),
+              ),
+            ),
+            label: "Perfil",
+          ),
         ],
       ),
     );
@@ -53,23 +114,20 @@ class _HomePageState extends State<HomePage> {
   Widget _selecionarTela(int index) {
     switch (index) {
       case 0:
+        return const ListaExerciciosPage(); // Página de Exercícios
+      case 1:
+        return const TreinoPage(); // Página de Treinos
+      case 2:
         return const Center(
           child: Text(
-            "Lista de Exercícios",
+            "Perfil",
             style: TextStyle(color: Colors.white),
-          ),
-        );
-      case 1:
-        return const TreinoPage();
-      case 2:
-        return Center(
-          child: Text(
-            "Meu Perfil ${widget.user.username}",
-            style: TextStyle(color: Colors.white),
-          ),
+          ), // Página de Perfil
         );
       default:
-        return Container();
+        return const Center(
+          child: Text("Erro", style: TextStyle(color: Colors.white)), // Erro
+        );
     }
   }
 }

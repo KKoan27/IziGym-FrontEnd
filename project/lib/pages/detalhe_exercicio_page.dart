@@ -2,153 +2,249 @@ import 'package:flutter/material.dart';
 import 'package:project/models/exercicio.dart';
 
 class DetalheExercicioPage extends StatefulWidget {
+  // Recebe o objeto 'Exercicio' via construtor. Assim, não preciso
+  // buscar na API de novo, apenas exibo os dados que vieram da lista.
   final Exercicio exercicio;
 
   const DetalheExercicioPage({super.key, required this.exercicio});
 
   @override
+  // Escolhi StatefulWidget porque preciso controlar qual aba
+  // está visível ('Instruções' ou 'Detalhes') através de uma variável de estado.
   State<DetalheExercicioPage> createState() => _DetalheExercicioPageState();
 }
 
-class _DetalheExercicioPageState extends State<DetalheExercicioPage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
+class _DetalheExercicioPageState extends State<DetalheExercicioPage> {
+  // Variável de controle: 0 mostra instrução, 1 mostra detalhes.
+  int _abaSelecionada = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      // App Bar customizada transparente para o botão "Cancelar"
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: TextButton.icon(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: 18),
-          label: Text("Voltar", style: TextStyle(color: Colors.black)),
-        ),
-        leadingWidth: 100,
-      ),
-      body: Column(
-        children: [
-          // 1. Área do GIF/Imagem
-          Container(
-            height: 300,
-            width: double.infinity,
-            color: Colors.grey[900],
-            child: widget.exercicio.gifUrl.isNotEmpty
-                ? Image.network(
-                    widget.exercicio.gifUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Icon(
-                      Icons.broken_image,
-                      size: 50,
-                      color: Colors.white54,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // 1. Cabeçalho: Botão Voltar/Cancelar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    // Uso o Navigator.pop(context) para desempilhar esta tela
+                    // e voltar para a anterior (Lista).
+                    onTap: () => Navigator.pop(context),
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                          size: 16,
+                        ),
+                        SizedBox(width: 4),
+                        Text(
+                          "Cancelar",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
                     ),
-                  )
-                : Icon(Icons.movie, size: 80, color: Colors.white24),
-          ),
+                  ),
+                ],
+              ),
+            ),
 
-          // 2. Nome do Exercício
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(16),
-            color: Color(0xFF1C1C1C),
-            child: Text(
+            // 2. Título do Exercício
+            Text(
               widget.exercicio.nome,
-              style: TextStyle(
+              textAlign: TextAlign.center,
+              style: const TextStyle(
                 color: Colors.white,
-                fontSize: 22,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
-              textAlign: TextAlign.center,
             ),
-          ),
 
-          // 3. Abas (Instruções / Detalhes)
-          Container(
-            color: Color(0xFF1C1C1C),
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: Colors.red,
-              labelColor: Colors.white,
-              unselectedLabelColor: Colors.grey,
-              tabs: [
-                Tab(text: "Instruções"),
-                Tab(text: "Dica de Execução"),
-              ],
+            const SizedBox(height: 20),
+
+            // 3. Imagem / GIF Centralizado
+            // [LAYOUT] SizedBox define um tamanho fixo para a imagem não estourar a tela.
+            SizedBox(
+              height: 250,
+              child: widget.exercicio.gifUrl.isNotEmpty
+                  ? Image.network(
+                      widget.exercicio.gifUrl,
+                      // [LAYOUT] BoxFit.contain garante que o GIF apareça inteiro sem cortes.
+                      fit: BoxFit.contain,
+                      // [DEFESA] Tratamento de erro se a URL do GIF estiver quebrada.
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.broken_image,
+                        size: 80,
+                        color: Colors.grey,
+                      ),
+                    )
+                  : const Icon(Icons.movie, size: 80, color: Colors.grey),
             ),
-          ),
 
-          // 4. Conteúdo das Abas
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
+            const SizedBox(height: 20),
+
+            // 4. Abas Customizadas Lógica de Troca de Abas
+            // Implementei abas manuais usando Row e GestureDetector
+            // para ter controle total do design, sem depender do TabBar padrão do Material.
+            Row(
               children: [
-                // Aba 1: Instruções (Conteúdo dinâmico do JSON)
-                _buildInstrucoesTab(),
-                // Aba 2: dicas (Placeholder por enquanto)
-                Center(
-                  child: Text(
-                    "Dicas e erros comuns virão aqui!",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                _buildCustomTab("Instruções", 0),
+                _buildCustomTab("Detalhes", 1),
               ],
             ),
-          ),
-        ],
+
+            // 5. Conteúdo Dinâmico (Aqui acontece a troca de abas)
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                color: Colors.black,
+                // Operador ternário: Se aba for 0, mostra Instruções, senão Detalhes.
+                // O conteúdo muda dinamicamente baseado na variável _abaSelecionada,
+                // usando renderização condicional.
+                child: SingleChildScrollView(
+                  child: _abaSelecionada == 0
+                      ? _buildInstrucoesContent()
+                      : _buildDetalhesContent(),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildInstrucoesTab() {
+  // [BOAS PRÁTICAS] Método para evitar repetição de código nos botões das abas
+  Widget _buildCustomTab(String title, int index) {
+    final bool isActive = _abaSelecionada == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            // Atualiza o estado para redesenhar a tela com a nova aba.
+            _abaSelecionada = index;
+          });
+        },
+        child: Container(
+          height: 50,
+          alignment: Alignment.center,
+          // [UX] Feedback visual: Cor muda se estiver ativo ou inativo.
+          color: isActive
+              ? const Color(0xFFE50000) // Vermelho Ativo
+              : const Color(0xFF1C1C1C), // Cinza Inativo
+          child: Text(
+            title,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Conteúdo da Aba 1
+  Widget _buildInstrucoesContent() {
     return SingleChildScrollView(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildSectionTitle("Descrição"),
+          const Text(
+            "Músculo Principal (Foco)",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+
+          // Uso do operador spread (...) para inserir uma lista de Widgets dentro da Column.
+          // O .map transforma cada String (músculo) em um Widget (Row com texto).
+          ...widget.exercicio.musculosAlvo.map(
+            (musculo) => Padding(
+              padding: const EdgeInsets.only(bottom: 6.0, left: 8.0),
+              child: Row(
+                children: [
+                  const Text("• ", style: TextStyle(color: Colors.white)),
+                  Expanded(
+                    child: Text(
+                      musculo,
+                      style: const TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          const Text(
+            "Execução",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
           Text(
             widget.exercicio.descricao,
-            style: TextStyle(color: Colors.white70, fontSize: 16),
-          ),
-          SizedBox(height: 20),
-
-          _buildSectionTitle("Músculos Alvo"),
-          Wrap(
-            spacing: 8,
-            children: widget.exercicio.musculosAlvo
-                .map(
-                  (musculo) => Chip(
-                    backgroundColor: Color(0xFFE50000),
-                    label: Text(musculo, style: TextStyle(color: Colors.white)),
-                  ),
-                )
-                .toList(),
+            style: const TextStyle(color: Colors.white70, height: 1.4),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
+  // Conteúdo da Aba 2
+  Widget _buildDetalhesContent() {
+    // [LÓGICA] Verificação se existem dicas para não mostrar tela vazia.
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.exercicio.dicas.isNotEmpty) ...[
+            const Text(
+              "Dicas e Erros Comuns",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            ...widget.exercicio.dicas.map(
+              (dica) => Padding(
+                padding: const EdgeInsets.only(bottom: 6.0, left: 8.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text("• ", style: TextStyle(color: Colors.white)),
+                    Expanded(
+                      child: Text(
+                        dica,
+                        style: const TextStyle(color: Colors.white70),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ] else ...[
+            // [UX] Feedback caso não haja dados.
+            const Text(
+              "Nenhuma informação adicional disponível.",
+              style: TextStyle(color: Colors.white38),
+            ),
+          ],
+        ],
       ),
     );
   }
