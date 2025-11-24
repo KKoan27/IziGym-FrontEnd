@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+// Certifique-se de que este import aponte para sua classe UserModel
+import 'package:project/models/usuario.dart';
+import 'package:project/services/loginservice.dart';
 import 'ResetarSenhaPage.dart';
 import 'CadastroPage.dart';
 import 'HomePage.dart';
@@ -15,35 +18,48 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
 
-  void _fazerLogin() {
-    // Validação simples: verifica se os campos não estão vazios
-    if (_emailController.text.isNotEmpty && _senhaController.text.isNotEmpty) {
-      // pushReplacement: Troca a tela atual pela nova.
-      // O usuário NÃO consegue voltar para o login apertando "voltar".
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    } else {
-      // Mostra um aviso rodapé (SnackBar) se faltar dados
+  // Função que executa a lógica de LOGIN e navegação
+  void _realizarLogin() async {
+    // 1. Validação simples: verifica se os campos não estão vazios
+    if (_emailController.text.isEmpty || _senhaController.text.isEmpty) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("Preencha e-mail e senha!")));
+      return; // Interrompe se estiver vazio
     }
+
+    // 2. Chamar a função de consumo (o serviço de login)
+    // A função 'login' (importada de login_service.dart) já cuida
+    // da chamada HTTP, dos SnackBar de erro e de salvar em SharedPreferences.
+    UserModel? user = await login(
+      _emailController.text,
+      _senhaController.text,
+      context,
+    );
+
+    // 3. Tratar o resultado e navegar
+    if (user != null) {
+      // Login bem-sucedido. Navega para a Home
+      Navigator.pushAndRemoveUntil(
+        context,
+        // Usamos o 'pushAndRemoveUntil' para que o usuário não volte para o Login
+        MaterialPageRoute(builder: (context) => HomePage(user: user)),
+        (route) => false, // Remove todas as rotas anteriores
+      );
+    }
+    // Se 'user' for null, a função 'login' já exibiu o SnackBar de erro.
   }
 
   @override
   Widget build(BuildContext context) {
-    // Layout básico com Padding para não colar nas bordas
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-          // Permite rolar se a tela for pequena
           padding: const EdgeInsets.all(30.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo do app
+              // ... (Logo e Título existentes) ...
               Image.asset(
                 'assets/logo.png',
                 height: 220,
@@ -64,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Campos de texto
               TextField(
                 controller: _emailController,
+                // ... (Decoração existente) ...
                 decoration: const InputDecoration(
                   hintText: 'E-mail',
                   prefixIcon: Icon(
@@ -71,11 +88,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Color(0xFFE50000),
                   ),
                 ),
+                style: const TextStyle(
+                  color: Colors.white,
+                ), // Adiciona estilo para texto digitado
               ),
               const SizedBox(height: 20),
               TextField(
                 controller: _senhaController,
-                obscureText: true, // Esconde a senha (bolinhas)
+                obscureText: true,
+                // ... (Decoração existente) ...
                 decoration: const InputDecoration(
                   hintText: 'Senha',
                   prefixIcon: Icon(
@@ -83,16 +104,20 @@ class _LoginScreenState extends State<LoginScreen> {
                     color: Color(0xFFE50000),
                   ),
                 ),
+                style: const TextStyle(
+                  color: Colors.white,
+                ), // Adiciona estilo para texto digitado
               ),
 
               const SizedBox(height: 30),
 
               // Botão Entrar
               ElevatedButton(
-                onPressed: _fazerLogin,
+                // 🔑 ALTERAÇÃO: Chamar a função correta
+                onPressed: _realizarLogin,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFE50000),
-                  minimumSize: const Size(double.infinity, 50), // Largura total
+                  minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -105,10 +130,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 20),
 
-              // Links de texto (GestureDetector torna o texto clicável)
+              // ... (Links de Cadastro e Resetar Senha existentes) ...
               GestureDetector(
                 onTap: () {
-                  // Navegação normal (push): O usuário pode voltar para o login
                   Navigator.push(
                     context,
                     MaterialPageRoute(

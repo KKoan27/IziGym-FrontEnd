@@ -15,7 +15,6 @@ void main() {
       // DEFINIÇÃO DAS ROTAS
       routes: {
         '/login': (context) => const LoginScreen(),
-        '/homepage': (context) => HomePage(),
         '/addtreino': (context) => MontagemTreino(),
         '/selectexercicio': (context) => AdicionaExercicio(),
       },

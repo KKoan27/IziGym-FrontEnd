@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:project/models/usuario.dart';
 import 'package:project/pages/MontagemTreino.dart';
 import 'package:project/pages/treinoPage.dart';
 import 'package:project/pages/lista_exercicios_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.user});
+  final UserModel user;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -60,8 +62,11 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return const TreinoPage();
       case 2:
-        return const Center(
-          child: Text("Meu Perfil", style: TextStyle(color: Colors.white)),
+        return Center(
+          child: Text(
+            "Meu Perfil ${widget.user.username}",
+            style: TextStyle(color: Colors.white),
+          ),
         );
       default:
         return Container();
