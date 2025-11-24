@@ -118,9 +118,9 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return const TreinoPage(); // Página de Treinos
       case 2:
-        return const Center(
+        return Center(
           child: Text(
-            "Perfil",
+            "OLA USUARIO : ${widget.user.username}",
             style: TextStyle(color: Colors.white),
           ), // Página de Perfil
         );

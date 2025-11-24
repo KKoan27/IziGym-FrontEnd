@@ -17,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   // Controladores para ler o que foi digitado nos campos
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
+  bool _isLoading = false; // para demonstrar que está logando
 
   // Função que executa a lógica de LOGIN e navegação
   void _realizarLogin() async {
@@ -27,7 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
       ).showSnackBar(const SnackBar(content: Text("Preencha e-mail e senha!")));
       return; // Interrompe se estiver vazio
     }
-
+    setState(() {
+      _isLoading = true;
+    });
     // 2. Chamar a função de consumo (o serviço de login)
     // A função 'login' (importada de login_service.dart) já cuida
     // da chamada HTTP, dos SnackBar de erro e de salvar em SharedPreferences.
@@ -37,6 +40,9 @@ class _LoginScreenState extends State<LoginScreen> {
       context,
     );
 
+    setState(() {
+      _isLoading = false;
+    });
     // 3. Tratar o resultado e navegar
     if (user != null) {
       // Login bem-sucedido. Navega para a Home
@@ -113,7 +119,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Botão Entrar
               ElevatedButton(
-                // 🔑 ALTERAÇÃO: Chamar a função correta
                 onPressed: _realizarLogin,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFE50000),
@@ -121,11 +126,26 @@ class _LoginScreenState extends State<LoginScreen> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
+                  disabledBackgroundColor: const Color.fromARGB(
+                    183,
+                    189,
+                    79,
+                    72,
+                  ),
                 ),
-                child: const Text(
-                  'Entrar',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
-                ),
+                child: _isLoading
+                    ? SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white, // Cor do indicador
+                          strokeWidth: 2.5,
+                        ),
+                      )
+                    : const Text(
+                        'Entrar',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
               ),
 
               const SizedBox(height: 20),
