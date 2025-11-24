@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'HomePage.dart';
+import 'package:http/http.dart' as http;
 
 class CadastroPage extends StatefulWidget {
   const CadastroPage({super.key});
@@ -136,5 +139,34 @@ class _CadastroPageState extends State<CadastroPage> {
         prefixIcon: Icon(icon, color: const Color(0xFFE50000)),
       ),
     );
+  }
+
+  Future<String> register(Map<String, String> body) async {
+    Map<String, String?> requestbody = {
+      "nome": body['nome'],
+      "email": body['email'],
+      "senha": body['senha'],
+    };
+
+    try {
+      var result = await http.post(
+        Uri.parse("http://{{SERVER_ADDRESS}}:{{SERVER_PORT}}/user?op=register"),
+        body: requestbody,
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (result.statusCode == 400) {
+        throw Exception("erro na requisição : ${result.body}");
+      } else {
+        Map<String, dynamic>? bodyresponse =
+            jsonDecode(result.body) as Map<String, dynamic>;
+
+        Map<String, dynamic> response = bodyresponse['response'];
+
+        return response['nome'];
+      }
+    } on Exception catch (e) {
+      rethrow;
+    }
   }
 }
