@@ -44,8 +44,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(137, 34, 34, 34),
-      appBar: AppBar(title: Text('Cancelar'), backgroundColor: Colors.grey),
+      appBar: AppBar(title: Text('Cancelar')),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SizedBox(
@@ -58,11 +57,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
                 textDirection: TextDirection.ltr,
                 textAlign: TextAlign.start,
                 "Criar Novo Treino",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
               ),
 
               Expanded(
@@ -78,7 +73,11 @@ class MontagemTreinoState extends State<MontagemTreino> {
                             nomeTreino,
                           ),
                           SizedBox(height: 50),
-                          entradaDeDados("Descrição", null, descricaoTreino),
+                          entradaDeDados(
+                            "Descrição",
+                            Icons.list,
+                            descricaoTreino,
+                          ),
 
                           Expanded(
                             // Linha de botões : Adicionar Exercicio, Salvar treinos
@@ -148,7 +147,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
                                                 as String,
                                           ),
                                           trailing: SizedBox(
-                                            width: 200,
+                                            width: 300, // IMPORTANTISSIMO!!
                                             child: Row(
                                               children: [
                                                 //INTERVALO
@@ -233,7 +232,6 @@ class MontagemTreinoState extends State<MontagemTreino> {
                                     child: Text(
                                       "Selecione os exercicios",
                                       style: TextStyle(
-                                        color: Colors.red,
                                         fontSize: 30,
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -274,7 +272,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8090/treino'),
+        Uri.parse('https://izigym-backend.globeapp.dev/treino'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: requestJson,
       );
@@ -300,16 +298,10 @@ class MontagemTreinoState extends State<MontagemTreino> {
     TextEditingController controller,
   ) {
     return Card(
-      color: const Color.fromARGB(255, 255, 255, 255),
       elevation: 2,
       child: TextField(
-        style: TextStyle(color: Colors.black),
-        cursorColor: Colors.red,
         controller: controller,
-        decoration: InputDecoration(
-          label: Text(texto, style: TextStyle(color: Colors.black)),
-          icon: Icon(icone),
-        ),
+        decoration: InputDecoration(label: Text(texto), icon: Icon(icone)),
       ),
     );
   }
