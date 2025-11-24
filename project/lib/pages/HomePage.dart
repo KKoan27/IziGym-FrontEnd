@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
           ),
         );
       case 1:
-        return const MontagemTreino(); // Chama a tela do arquivo treinos.dart
+        return const TreinoPage();
       case 2:
         return const Center(
           child: Text("Meu Perfil", style: TextStyle(color: Colors.white)),
