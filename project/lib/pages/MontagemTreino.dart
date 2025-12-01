@@ -44,8 +44,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(137, 34, 34, 34),
-      appBar: AppBar(title: Text('Cancelar'), backgroundColor: Colors.grey),
+      appBar: AppBar(title: Text('Cancelar')),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SizedBox(
@@ -148,7 +147,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
                                                 as String,
                                           ),
                                           trailing: SizedBox(
-                                            width: 300, // IMPORTANTISSIMO!!
+                                            width: 200, // IMPORTANTISSIMO!!
                                             child: Row(
                                               children: [
                                                 //INTERVALO
@@ -233,7 +232,6 @@ class MontagemTreinoState extends State<MontagemTreino> {
                                     child: Text(
                                       "Selecione os exercicios",
                                       style: TextStyle(
-                                        color: Colors.red,
                                         fontSize: 30,
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -300,16 +298,10 @@ class MontagemTreinoState extends State<MontagemTreino> {
     TextEditingController controller,
   ) {
     return Card(
-      color: const Color.fromARGB(255, 255, 255, 255),
       elevation: 2,
       child: TextField(
-        style: TextStyle(color: Colors.black),
-        cursorColor: Colors.red,
         controller: controller,
-        decoration: InputDecoration(
-          label: Text(texto, style: TextStyle(color: Colors.black)),
-          icon: Icon(icone),
-        ),
+        decoration: InputDecoration(label: Text(texto), icon: Icon(icone)),
       ),
     );
   }
