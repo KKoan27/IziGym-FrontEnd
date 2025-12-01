@@ -3,7 +3,7 @@ import 'package:project/models/exercicio.dart';
 
 class ExercicioService {
   // url do backend
-  final String _baseUrl = "https://izigym-backend-ld8brdh-kkoan27.globeapp.dev";
+  final String _baseUrl = "https://izigym-backend.globeapp.dev";
 
   Future<List<Exercicio>> fetchExercicios({String query = ''}) async {
     //  rota baseada no seu link é /getexercicios

@@ -3,6 +3,7 @@ import 'package:project/models/usuario.dart';
 import 'package:project/pages/MontagemTreino.dart';
 import 'package:project/pages/treinoPage.dart';
 import 'package:project/pages/lista_exercicios_page.dart';
+import 'package:project/pages/PerfilPage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.user});
@@ -62,12 +63,7 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return const TreinoPage();
       case 2:
-        return Center(
-          child: Text(
-            "Meu Perfil ${widget.user.username}",
-            style: TextStyle(color: Colors.white),
-          ),
-        );
+        return PerfilPage(user: widget.user);
       default:
         return Container();
     }
