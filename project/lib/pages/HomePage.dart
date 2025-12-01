@@ -1,113 +1,56 @@
 import 'package:flutter/material.dart';
+import 'package:project/models/usuario.dart';
 import 'package:project/pages/MontagemTreino.dart';
 import 'package:project/pages/treinoPage.dart';
 import 'package:project/pages/lista_exercicios_page.dart';
+import 'package:project/pages/PerfilPage.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.user});
+  final UserModel user;
 
   @override
-  State<StatefulWidget> createState() => HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class HomePageState extends State<HomePage> {
-  int locale = 0; // Alterei para 0 para iniciar na lista de exercícios
+class _HomePageState extends State<HomePage> {
+  // Variável que guarda qual aba está selecionada (0, 1 ou 2)
+  int _indiceAtual = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: selectItem(locale),
-      backgroundColor: const Color.fromARGB(255, 43, 42, 42),
+      // O body muda dependendo do índice selecionado
+      body: _selecionarTela(_indiceAtual),
+
+      // Barra de navegação inferior
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color.fromARGB(
-          255,
-          28,
-          28,
-          28,
-        ), // Fundo mais escuro
-        currentIndex: locale,
-        selectedItemColor: const Color(0xFFE50000), // Vermelho IziGym
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        onTap: (value) => setState(() {
-          locale = value;
-        }),
-        items: [
+        backgroundColor: const Color(0xFF1C1C1C), // Fundo cinza escuro
+        currentIndex: _indiceAtual, // Diz à barra qual ícone deve brilhar
+        selectedItemColor: const Color(0xFFE50000), // Cor do ícone ativo
+        unselectedItemColor: Colors.grey, // Cor dos ícones inativos
+        // Função chamada quando clica em um ícone
+        onTap: (novoIndice) {
+          setState(() {
+            _indiceAtual = novoIndice; // Atualiza a variável e redesenha a tela
+          });
+        },
+        items: const [
           BottomNavigationBarItem(
-            // Ícone padrão (Inativo)
-            icon: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                'assets/IconMusculo.png',
-                width: 24,
-                height: 24,
-                color: Colors.grey,
-              ),
-            ),
-            // Ícone Ativo (Com Zoom)
-            activeIcon: Transform.scale(
-              scale: 1.5,
-              child: Image.asset(
-                'assets/IconMusculo.png',
-                width: 24,
-                height: 24,
-                color: const Color(0xFFE50000),
-              ),
-            ),
+            icon: Icon(Icons.fitness_center),
             label: "Exercícios",
           ),
           BottomNavigationBarItem(
-            // Ícone padrão (Inativo)
-            icon: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                'assets/IconPrancheta.png',
-                width: 24,
-                height: 24,
-                color: Colors.grey,
-              ),
-            ),
-            // Ícone Ativo (Com Zoom)
-            activeIcon: Transform.scale(
-              scale: 1.5,
-              child: Image.asset(
-                'assets/IconPrancheta.png',
-                width: 24,
-                height: 24,
-                color: const Color(0xFFE50000),
-              ),
-            ),
-            label: "Treinos",
-          ),
-          BottomNavigationBarItem(
-            // Ícone padrão (Inativo)
-            icon: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                'assets/IconPerfil.png',
-                width: 24,
-                height: 24,
-                color: Colors.grey,
-              ),
-            ),
-            // Ícone Ativo (Com Zoom)
-            activeIcon: Transform.scale(
-              scale: 1.5,
-              child: Image.asset(
-                'assets/IconPerfil.png',
-                width: 24,
-                height: 24,
-                color: const Color(0xFFE50000),
-              ),
-            ),
-            label: "Perfil",
+            icon: Icon(Icons.add_circle_outline),
+            label: "Criar Treino",
           ),
         ],
       ),
     );
   }
 
-  Widget selectItem(int index) {
+  // Método auxiliar que retorna o Widget correto baseado no índice
+  Widget _selecionarTela(int index) {
     switch (index) {
       case 0:
         return const ListaExerciciosPage(); // Página de Exercícios
