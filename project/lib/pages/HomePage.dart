@@ -1,68 +1,66 @@
 import 'package:flutter/material.dart';
+import 'package:project/models/usuario.dart';
 import 'package:project/pages/MontagemTreino.dart';
 import 'package:project/pages/treinoPage.dart';
+import 'package:project/pages/lista_exercicios_page.dart';
+import 'package:project/pages/PerfilPage.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, required this.user});
+  final UserModel user;
 
   @override
-  State<StatefulWidget> createState() => HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class HomePageState extends State<HomePage> {
-  int locale = 1;
+class _HomePageState extends State<HomePage> {
+  // Variável que guarda qual aba está selecionada (0, 1 ou 2)
+  int _indiceAtual = 0;
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return (Scaffold(
-      body: selectItem(locale),
-      backgroundColor: const Color.fromARGB(255, 43, 42, 42),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color.fromARGB(255, 100, 100, 100),
-        currentIndex: locale,
-        selectedItemColor: const Color.fromARGB(255, 170, 45, 36),
+    return Scaffold(
+      // O body muda dependendo do índice selecionado
+      body: _selecionarTela(_indiceAtual),
 
-        onTap: (value) => setState(() {
-          locale = value;
-        }),
-        items: [
-          BottomNavigationBarItem(icon: Text("💪"), label: "Exercicios"),
+      // Barra de navegação inferior
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color(0xFF1C1C1C), // Fundo cinza escuro
+        currentIndex: _indiceAtual, // Diz à barra qual ícone deve brilhar
+        selectedItemColor: const Color(0xFFE50000), // Cor do ícone ativo
+        unselectedItemColor: Colors.grey, // Cor dos ícones inativos
+        // Função chamada quando clica em um ícone
+        onTap: (novoIndice) {
+          setState(() {
+            _indiceAtual = novoIndice; // Atualiza a variável e redesenha a tela
+          });
+        },
+        items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt_rounded),
-            label: "Treino",
+            icon: Icon(Icons.fitness_center),
+            label: "Exercícios",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.add_circle_outline),
+            label: "Criar Treino",
           ),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
         ],
       ),
-    ));
+    );
   }
 
-  Widget selectItem(int index) {
+  // Método auxiliar que retorna o Widget correto baseado no índice
+  Widget _selecionarTela(int index) {
     switch (index) {
       case 0:
-        return (Center(
-          child: Container(
-            child: Text("Exercicios", style: TextStyle(color: Colors.white)),
-          ),
-        ));
+        return const ListaExerciciosPage(); // Página de Exercícios
       case 1:
-        return Center(child: TreinoPage());
+        return const TreinoPage(); // Página de Treinos
       case 2:
-        return Center(
-          child: Container(
-            child: Text("Perfil", style: TextStyle(color: Colors.white)),
-          ),
-        );
+        return PerfilPage(user: widget.user);
       default:
-        return Center(
-          child: Container(
-            child: Text(
-              "Nao foi em nada",
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        );
+        return Container();
     }
   }
 }

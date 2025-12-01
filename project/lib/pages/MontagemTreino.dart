@@ -58,11 +58,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
                 textDirection: TextDirection.ltr,
                 textAlign: TextAlign.start,
                 "Criar Novo Treino",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 25,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25),
               ),
 
               Expanded(
@@ -78,7 +74,11 @@ class MontagemTreinoState extends State<MontagemTreino> {
                             nomeTreino,
                           ),
                           SizedBox(height: 50),
-                          entradaDeDados("Descrição", null, descricaoTreino),
+                          entradaDeDados(
+                            "Descrição",
+                            Icons.list,
+                            descricaoTreino,
+                          ),
 
                           Expanded(
                             // Linha de botões : Adicionar Exercicio, Salvar treinos
@@ -148,7 +148,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
                                                 as String,
                                           ),
                                           trailing: SizedBox(
-                                            width: 200,
+                                            width: 300, // IMPORTANTISSIMO!!
                                             child: Row(
                                               children: [
                                                 //INTERVALO
@@ -274,7 +274,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://127.0.0.1:8090/treino'),
+        Uri.parse('https://izigym-backend.globeapp.dev/treino'),
         headers: {'Content-Type': 'application/json; charset=UTF-8'},
         body: requestJson,
       );
