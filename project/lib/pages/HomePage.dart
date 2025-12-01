@@ -44,7 +44,6 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.add_circle_outline),
             label: "Criar Treino",
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
         ],
       ),
     );
@@ -54,18 +53,17 @@ class _HomePageState extends State<HomePage> {
   Widget _selecionarTela(int index) {
     switch (index) {
       case 0:
-        return const Center(
-          child: Text(
-            "Lista de Exercícios",
-            style: TextStyle(color: Colors.white),
-          ),
-        );
+        return const ListaExerciciosPage(); // Página de Exercícios
       case 1:
-        return const TreinoPage();
+        return const TreinoPage(); // Página de Treinos
       case 2:
-        return PerfilPage(user: widget.user);
+        return const Center(
+          child: Text("Perfil", style: TextStyle(color: Colors.white)),
+        ); // Página de Perfil
       default:
-        return Container();
+        return const Center(
+          child: Text("Erro", style: TextStyle(color: Colors.white)), // Erro
+        );
     }
   }
 }
