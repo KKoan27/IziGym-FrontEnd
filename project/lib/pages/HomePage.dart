@@ -44,6 +44,7 @@ class _HomePageState extends State<HomePage> {
             icon: Icon(Icons.add_circle_outline),
             label: "Criar Treino",
           ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
         ],
       ),
     );
@@ -57,13 +58,9 @@ class _HomePageState extends State<HomePage> {
       case 1:
         return const TreinoPage(); // Página de Treinos
       case 2:
-        return const Center(
-          child: Text("Perfil", style: TextStyle(color: Colors.white)),
-        ); // Página de Perfil
+        return PerfilPage(user: widget.user);
       default:
-        return const Center(
-          child: Text("Erro", style: TextStyle(color: Colors.white)), // Erro
-        );
+        return Container();
     }
   }
 }
