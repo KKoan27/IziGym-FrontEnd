@@ -34,15 +34,19 @@ class _TreinoPageState extends State<TreinoPage> {
 
     try {
       // TODO: Substituir 'TesteADM' pelo nome de usuário real ou token de autenticação
-      final response = await http.get(Uri.parse('https://izigym-backend.globeapp.dev/treino?user=TesteADM'));
+      final response = await http.get(
+        Uri.parse('https://izigym-backend.globeapp.dev/treino?user=TesteADM'),
+      );
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
         final List<dynamic> treinosData = responseData['response'];
 
         final List<Treino> fetchedTreinos = treinosData.map((treinoData) {
-          final String nomeTreino = treinoData['nomeTreino'] ?? 'Nome não informado';
-          final String descricaoTreino = treinoData['descricao'] ?? 'Sem descrição';
+          final String nomeTreino =
+              treinoData['nomeTreino'] ?? 'Nome não informado';
+          final String descricaoTreino =
+              treinoData['descricao'] ?? 'Sem descrição';
           final List<dynamic> exercicios = treinoData['exercicios'] ?? [];
           final int numExercicios = exercicios.length;
           final String detalhes = '$numExercicios exercícios';
@@ -82,57 +86,55 @@ class _TreinoPageState extends State<TreinoPage> {
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : treinos.isEmpty
-              ? Center(child: Text("Nenhum treino encontrado. Adicione um novo!"))
-              : ListView.builder(
-                  padding: EdgeInsets.all(16),
-                  itemCount: treinos.length,
-                  itemBuilder: (context, index) {
-                    final treino = treinos[index];
+          ? Center(child: Text("Nenhum treino encontrado. Adicione um novo!"))
+          : ListView.builder(
+              padding: EdgeInsets.all(16),
+              itemCount: treinos.length,
+              itemBuilder: (context, index) {
+                final treino = treinos[index];
 
-                    return Card(
-                      elevation: 4,
-                      margin: EdgeInsets.only(bottom: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              treino.titulo,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              treino.nome,
-                              style: TextStyle(fontSize: 15),
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              treino.detalhes,
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: Colors.grey[700],
-                              ),
-                            ),
-                          ],
+                return Card(
+                  elevation: 4,
+                  margin: EdgeInsets.only(bottom: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          treino.titulo,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                ),
+                        SizedBox(height: 4),
+                        Text(treino.nome, style: TextStyle(fontSize: 15)),
+                        SizedBox(height: 8),
+                        Text(
+                          treino.detalhes,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
 
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.playlist_add_rounded),
         onPressed: () async {
           // Espera o retorno da tela de adição de treino
-          final bool? treinoAdicionado = await Navigator.pushNamed(context, '/addtreino') as bool?;
-          
+          final bool? treinoAdicionado =
+              await Navigator.pushNamed(context, '/addtreino') as bool?;
+
           // Se o treino foi adicionado com sucesso (MontagemTreino retornou true), recarrega a lista
           if (treinoAdicionado == true) {
             _loadTreinos();
