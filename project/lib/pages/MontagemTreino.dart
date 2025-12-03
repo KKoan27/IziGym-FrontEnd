@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:project/pages/AdicionaExercicio.dart';
 import 'package:http/http.dart' as http;
+import 'package:project/models/usuario.dart';
+import 'package:project/pages/HomePage.dart';
 
 class MontagemTreino extends StatefulWidget {
-  const MontagemTreino({super.key});
+  final UserModel user;
+  const MontagemTreino({super.key, required this.user});
 
   @override
   State<MontagemTreino> createState() {
@@ -147,7 +150,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
                                                 as String,
                                           ),
                                           trailing: SizedBox(
-                                            width: 200, // IMPORTANTISSIMO!!
+                                            width: 350, // IMPORTANTISSIMO!!
                                             child: Row(
                                               children: [
                                                 //INTERVALO
@@ -263,7 +266,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
     }).toList();
 
     final Map<String, dynamic> requestBody = {
-      'nome': 'TesteADM',
+      'nome': widget.user.username,
       'nomeTreino': nomeTreino.text,
       'exercicios': exerciciosList,
     };
@@ -281,7 +284,13 @@ class MontagemTreinoState extends State<MontagemTreino> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Treino criado com sucesso!")),
         );
-        Navigator.pushNamed(context, '/homepage');
+        await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(user: widget.user),
+              ),
+            )
+            as bool?;
       } else {
         throw Exception("Erro na requisição, ${response.statusCode}");
       }

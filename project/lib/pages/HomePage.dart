@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return const ListaExerciciosPage(); // Página de Exercícios
       case 1:
-        return const TreinoPage(); // Página de Treinos
+        return TreinoPage(user: widget.user); // Página de Treinos
       case 2:
         return PerfilPage(user: widget.user);
       default:
