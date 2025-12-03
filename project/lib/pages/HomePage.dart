@@ -3,6 +3,7 @@ import 'package:project/models/usuario.dart';
 import 'package:project/pages/MontagemTreino.dart';
 import 'package:project/pages/treinoPage.dart';
 import 'package:project/pages/lista_exercicios_page.dart';
+import 'package:project/pages/PerfilPage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.user});
@@ -19,92 +20,31 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // O body muda dependendo do índice selecionado
       body: _selecionarTela(_indiceAtual),
-      backgroundColor: const Color.fromARGB(255, 43, 42, 42),
+
+      // Barra de navegação inferior
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: const Color.fromARGB(
-          255,
-          28,
-          28,
-          28,
-        ), // Fundo mais escuro
-        currentIndex: _indiceAtual,
-        selectedItemColor: const Color(0xFFE50000), // Vermelho IziGym
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-        onTap: (value) => setState(() {
-          _indiceAtual = value;
-        }),
-        items: [
+        backgroundColor: const Color(0xFF1C1C1C), // Fundo cinza escuro
+        currentIndex: _indiceAtual, // Diz à barra qual ícone deve brilhar
+        selectedItemColor: const Color(0xFFE50000), // Cor do ícone ativo
+        unselectedItemColor: Colors.grey, // Cor dos ícones inativos
+        // Função chamada quando clica em um ícone
+        onTap: (novoIndice) {
+          setState(() {
+            _indiceAtual = novoIndice; // Atualiza a variável e redesenha a tela
+          });
+        },
+        items: const [
           BottomNavigationBarItem(
-            // Ícone padrão (Inativo)
-            icon: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                'assets/IconMusculo.png',
-                width: 24,
-                height: 24,
-                color: Colors.grey,
-              ),
-            ),
-            // Ícone Ativo (Com Zoom)
-            activeIcon: Transform.scale(
-              scale: 1.5,
-              child: Image.asset(
-                'assets/IconMusculo.png',
-                width: 24,
-                height: 24,
-                color: const Color(0xFFE50000),
-              ),
-            ),
+            icon: Icon(Icons.fitness_center),
             label: "Exercícios",
           ),
           BottomNavigationBarItem(
-            // Ícone padrão (Inativo)
-            icon: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                'assets/IconPrancheta.png',
-                width: 24,
-                height: 24,
-                color: Colors.grey,
-              ),
-            ),
-            // Ícone Ativo (Com Zoom)
-            activeIcon: Transform.scale(
-              scale: 1.5,
-              child: Image.asset(
-                'assets/IconPrancheta.png',
-                width: 24,
-                height: 24,
-                color: const Color(0xFFE50000),
-              ),
-            ),
-            label: "Treinos",
+            icon: Icon(Icons.add_circle_outline),
+            label: "Criar Treino",
           ),
-          BottomNavigationBarItem(
-            // Ícone padrão (Inativo)
-            icon: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(
-                'assets/IconPerfil.png',
-                width: 24,
-                height: 24,
-                color: Colors.grey,
-              ),
-            ),
-            // Ícone Ativo (Com Zoom)
-            activeIcon: Transform.scale(
-              scale: 1.5,
-              child: Image.asset(
-                'assets/IconPerfil.png',
-                width: 24,
-                height: 24,
-                color: const Color(0xFFE50000),
-              ),
-            ),
-            label: "Perfil",
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Perfil"),
         ],
       ),
     );
@@ -116,18 +56,11 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return const ListaExerciciosPage(); // Página de Exercícios
       case 1:
-        return const TreinoPage(); // Página de Treinos
+        return TreinoPage(user: widget.user); // Página de Treinos
       case 2:
-        return Center(
-          child: Text(
-            "OLA USUARIO : ${widget.user.username}",
-            style: TextStyle(color: Colors.white),
-          ), // Página de Perfil
-        );
+        return PerfilPage(user: widget.user);
       default:
-        return const Center(
-          child: Text("Erro", style: TextStyle(color: Colors.white)), // Erro
-        );
+        return Container();
     }
   }
 }

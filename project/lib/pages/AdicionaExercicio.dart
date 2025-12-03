@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:project/models/exercicio.dart';
 
 class AdicionaExercicio extends StatefulWidget {
   @override
@@ -11,6 +12,9 @@ class AdicionaExercicio extends StatefulWidget {
 class AdicionaExercicioState extends State<AdicionaExercicio> {
   late Future<List<Map<String, dynamic>>> exercicioFuture;
   List<int> selectedIndex = [];
+  TextEditingController search = TextEditingController();
+  late Future<List<Exercicio>> _futureExercicios;
+
   List<Map<String, dynamic>> bodySelect = [];
 
   @override
@@ -18,6 +22,10 @@ class AdicionaExercicioState extends State<AdicionaExercicio> {
     return Scaffold(
       body: Column(
         children: [
+          TextField(
+            controller: search,
+            onChanged: (value) => _realizarPesquisa(value),
+          ),
           Expanded(
             child: FutureBuilder(
               future: exercicioFuture,
@@ -39,7 +47,7 @@ class AdicionaExercicioState extends State<AdicionaExercicio> {
 
                         return Card(
                           elevation: 3,
-                          color: selecionado ? Colors.blue[700] : Colors.red,
+                          color: selecionado ? Colors.red[700] : Colors.black38,
                           margin: EdgeInsets.all(10),
 
                           child: CheckboxListTile(
@@ -85,15 +93,40 @@ class AdicionaExercicioState extends State<AdicionaExercicio> {
     super.initState();
   }
 
-  Future<List<Map<String, dynamic>>> getExercicios() async {
-    var response = await http.get(
-      Uri.parse('https://izigym-backend.globeapp.dev/getexercicios'),
-    );
+  Future<List<Map<String, dynamic>>> getExercicios({String? query}) async {
+    var response;
+    if (query == null || query.isEmpty) {
+      response = await http.get(
+        Uri.parse('https://izigym-backend.globeapp.dev/getexercicios'),
+      );
+    } else {
+      response = await http.get(
+        Uri.parse('https://izigym-backend.globeapp.dev/getexercicios?q=$query'),
+      );
+    }
 
     var responseJson = await jsonDecode(response.body) as Map<String, dynamic>;
 
     var responsebody = responseJson['response'] as List<dynamic>;
 
     return responsebody.map((i) => i as Map<String, dynamic>).toList();
+  }
+
+  // Conceito adaptado para sua classe AdicionaExercicioState:
+
+  void _realizarPesquisa(String query) {
+    // A 'query' seria o texto de _searchController.text
+    // Se a lista já está carregada e você vai filtrar localmente,
+    // você chamaria uma função de filtro aqui.
+
+    // No caso de chamar a API novamente com o termo de pesquisa:
+    setState(() {
+      // Atualiza a Future para que o FutureBuilder recarregue
+      // Passando o termo de pesquisa para o seu serviço de dados.
+      exercicioFuture = getExercicios(query: query);
+      // Além disso, limpa os itens selecionados, pois a nova lista tem novos índices:
+      selectedIndex = [];
+      bodySelect = [];
+    });
   }
 }

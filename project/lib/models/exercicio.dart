@@ -21,44 +21,51 @@ List<Exercicio> exercicioFromJson(String str) {
 }
 
 class Exercicio {
-  final String id;
+  final String? id;
   final String nome;
   final String descricao;
   final List<String> musculosAlvo;
   final String gifUrl;
   final List<String> dicas;
 
+  final int? repeticoes;
+  final int? intervalo;
+
   Exercicio({
-    required this.id,
+    this.id,
     required this.nome,
     required this.descricao,
     required this.musculosAlvo,
     required this.gifUrl,
     this.dicas = const [],
-  });
 
+    this.repeticoes,
+    this.intervalo,
+  });
   factory Exercicio.fromJson(Map<String, dynamic> json) {
     return Exercicio(
-      //  Uso de '??' (operador de coalescência nula).
-      // Se o campo "_id" vier nulo da API, usamos '' string vazia para o app não quebrar.
+      // Campos obrigatórios (assumindo que nunca são nulos no JSON, ou que você fornece um fallback)
       id: json["_id"] ?? '',
-
       nome: json["nome"] ?? 'Sem nome',
-
       descricao: json["descricao"] ?? 'Sem descrição disponível.',
-      //  Uso de '??' (operador de coalescência nula).
-      // Se o campo "_id" vier nulo da API, usamos '' string vazia para o app não quebrar.
+      gifUrl: json["execucao"] ?? '',
+
+      // Conversões para Listas (com fallback para lista vazia)
       musculosAlvo:
           (json["musculosAlvo"] as List?)
               ?.map((item) => item.toString())
               .toList() ??
           [],
-
-      gifUrl: json["execucao"] ?? '',
-      // Conversão segura para dicas também
       dicas:
           (json["dicas"] as List?)?.map((item) => item.toString()).toList() ??
           [],
+
+      // 🚨 Tratamento de Inteiros Opcionais (Int?) 🚨
+      // 1. Acessa a chave no mapa (json['repeticoes']).
+      // 2. Tenta fazer o casting para 'int?'. Se a chave não existir ou for null, o resultado é null.
+      // O Dart 3.x+ e o Null Safety fazem isso de forma robusta:
+      repeticoes: json['repeticoes'] as int?,
+      intervalo: json['intervalo'] as int?,
     );
   }
 }
