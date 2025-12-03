@@ -177,3 +177,76 @@ class _TreinoPageState extends State<TreinoPage> {
     );
   }
 }
+
+//  PRIMEIRO CÓDIGO FEITO //
+
+// import 'package:flutter/material.dart';
+
+// class TreinoPage extends StatefulWidget {
+//   const TreinoPage({super.key});
+
+//   @override
+//   State<TreinoPage> createState() => _TreinoPageState();
+// }
+
+// class _TreinoPageState extends State<TreinoPage> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("Meus Treinos"),
+//       ),
+
+//       body: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: ListView(
+//           children: [
+//             Card(
+//               elevation: 4,
+//               shape: RoundedRectangleBorder(
+//                 borderRadius: BorderRadius.circular(12),
+//               ),
+//               child: Padding(
+//                 padding: const EdgeInsets.all(16.0),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       "Treino A",
+//                       style: TextStyle(
+//                         fontSize: 16,
+//                         fontWeight: FontWeight.bold,
+//                       ),
+//                     ),
+//                     SizedBox(height: 4),
+//                     Text(
+//                       "Nome do treino",
+//                       style: TextStyle(
+//                         fontSize: 15,
+//                       ),
+//                     ),
+//                     SizedBox(height: 8),
+//                     Text(
+//                       "Exemplo: 5 exercícios · Foco: Hipertrofia",
+//                       style: TextStyle(
+//                         fontSize: 13,
+//                         color: Colors.grey,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+
+//       floatingActionButton: FloatingActionButton(
+//         child: Icon(Icons.playlist_add_rounded),
+//         onPressed: () {
+//           Navigator.pushNamed(context, '/addtreino');
+//         },
+//       ),
+//     );
+//   }
+// }
