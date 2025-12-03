@@ -44,8 +44,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(137, 34, 34, 34),
-      appBar: AppBar(title: Text('Cancelar'), backgroundColor: Colors.grey),
+      appBar: AppBar(title: Text('Cancelar')),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SizedBox(
@@ -233,7 +232,6 @@ class MontagemTreinoState extends State<MontagemTreino> {
                                     child: Text(
                                       "Selecione os exercicios",
                                       style: TextStyle(
-                                        color: Colors.red,
                                         fontSize: 30,
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -265,8 +263,11 @@ class MontagemTreinoState extends State<MontagemTreino> {
     }).toList();
 
     final Map<String, dynamic> requestBody = {
-      'nome': 'TesteADM',
+      // O campo 'nome' foi re-adicionado, pois o erro 400 sugere que ele pode ser obrigatório.
+      // O valor 'TesteADM' é mantido como estava no código original.
+      'nome': 'TesteADM', 
       'nomeTreino': nomeTreino.text,
+      'descricao': descricaoTreino.text, // Adicionando a descrição
       'exercicios': exerciciosList,
     };
 
@@ -283,7 +284,7 @@ class MontagemTreinoState extends State<MontagemTreino> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Treino criado com sucesso!")),
         );
-        Navigator.pushNamed(context, '/homepage');
+        Navigator.pop(context, true); // Retorna true para indicar que um novo treino foi adicionado
       } else {
         throw Exception("Erro na requisição, ${response.statusCode}");
       }
@@ -300,16 +301,10 @@ class MontagemTreinoState extends State<MontagemTreino> {
     TextEditingController controller,
   ) {
     return Card(
-      color: const Color.fromARGB(255, 255, 255, 255),
       elevation: 2,
       child: TextField(
-        style: TextStyle(color: Colors.black),
-        cursorColor: Colors.red,
         controller: controller,
-        decoration: InputDecoration(
-          label: Text(texto, style: TextStyle(color: Colors.black)),
-          icon: Icon(icone),
-        ),
+        decoration: InputDecoration(label: Text(texto), icon: Icon(icone)),
       ),
     );
   }

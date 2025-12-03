@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:project/models/exercicio.dart';
 
 class ExercicioService {
-  // url do backend
   final String _baseUrl = "https://izigym-backend.globeapp.dev";
 
   // [ORAL] "O método fetchExercicios aceita um parâmetro opcional 'query'.
