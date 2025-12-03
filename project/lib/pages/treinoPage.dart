@@ -1,17 +1,19 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:project/models/usuario.dart';
+import 'package:project/pages/MontagemTreino.dart';
 
 class Treino {
   final String titulo;
   final String nome;
   final String detalhes;
-
   Treino(this.titulo, this.nome, this.detalhes);
 }
 
 class TreinoPage extends StatefulWidget {
-  const TreinoPage({super.key});
+  final UserModel user;
+  const TreinoPage({super.key, required this.user});
 
   @override
   State<TreinoPage> createState() => _TreinoPageState();
@@ -35,7 +37,9 @@ class _TreinoPageState extends State<TreinoPage> {
     try {
       // TODO: Substituir 'TesteADM' pelo nome de usuário real ou token de autenticação
       final response = await http.get(
-        Uri.parse('https://izigym-backend.globeapp.dev/treino?user=TesteADM'),
+        Uri.parse(
+          'https://izigym-backend.globeapp.dev/treino?user=${widget.user.username}',
+        ),
       );
 
       if (response.statusCode == 200) {
@@ -133,7 +137,13 @@ class _TreinoPageState extends State<TreinoPage> {
         onPressed: () async {
           // Espera o retorno da tela de adição de treino
           final bool? treinoAdicionado =
-              await Navigator.pushNamed(context, '/addtreino') as bool?;
+              await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MontagemTreino(user: widget.user),
+                    ),
+                  )
+                  as bool?;
 
           // Se o treino foi adicionado com sucesso (MontagemTreino retornou true), recarrega a lista
           if (treinoAdicionado == true) {
