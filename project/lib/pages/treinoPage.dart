@@ -15,14 +15,6 @@ class Treino {
   Treino(this.titulo, this.nome, this.detalhes, this.exercicios);
 }
 
-class Treino {
-  final String titulo;
-  final String nome;
-  final String detalhes;
-
-  Treino(this.titulo, this.nome, this.detalhes);
-}
-
 class TreinoPage extends StatefulWidget {
   final UserModel user;
   const TreinoPage({super.key, required this.user});
