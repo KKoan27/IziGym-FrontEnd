@@ -27,10 +27,10 @@ class PlaytrainpageState extends State<Playtrainpage> {
                 final exercicio = widget.exerTrain[index];
 
                 final String repeticoes = exercicio.repeticoes != null
-                    ? "${exercicio.repeticoes} Reps"
+                    ? "${exercicio.repeticoes} Repetições"
                     : "Série não definida";
                 final String intervalo = exercicio.intervalo != null
-                    ? "${exercicio.intervalo} seg. descanso"
+                    ? "${exercicio.intervalo} Min. descanso"
                     : "Sem descanso";
 
                 return Card(
