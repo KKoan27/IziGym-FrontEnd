@@ -1,14 +1,18 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:project/models/exercicio.dart';
 import 'package:project/models/usuario.dart';
 import 'package:project/pages/MontagemTreino.dart';
+import 'package:project/pages/PlayTrainpage.dart';
 
 class Treino {
   final String titulo;
   final String nome;
   final String detalhes;
-  Treino(this.titulo, this.nome, this.detalhes);
+  final List<Exercicio> exercicios;
+
+  Treino(this.titulo, this.nome, this.detalhes, this.exercicios);
 }
 
 class TreinoPage extends StatefulWidget {
@@ -35,7 +39,6 @@ class _TreinoPageState extends State<TreinoPage> {
     });
 
     try {
-      // TODO: Substituir 'TesteADM' pelo nome de usuário real ou token de autenticação
       final response = await http.get(
         Uri.parse(
           'https://izigym-backend.globeapp.dev/treino?user=${widget.user.username}',
@@ -51,26 +54,37 @@ class _TreinoPageState extends State<TreinoPage> {
               treinoData['nomeTreino'] ?? 'Nome não informado';
           final String descricaoTreino =
               treinoData['descricao'] ?? 'Sem descrição';
-          final List<dynamic> exercicios = treinoData['exercicios'] ?? [];
-          final int numExercicios = exercicios.length;
+
+          // 🚨 PASSO 1: Mapear os dados de exercício da API para objetos Exercicio
+          final List<dynamic> exerciciosRaw = treinoData['exercicios'] ?? [];
+          final List<Exercicio> exerciciosCompletos = exerciciosRaw
+              .where((item) => item is Map<String, dynamic>)
+              .map((item) => Exercicio.fromJson(item as Map<String, dynamic>))
+              .toList();
+
+          // PASSO 2: Criar a string de detalhes com a contagem correta
+          final int numExercicios = exerciciosCompletos.length;
           final String detalhes = '$numExercicios exercícios';
 
-          // Usando nomeTreino para 'titulo' e descricaoTreino para 'nome' (que era o campo de descrição no mock)
-          return Treino(nomeTreino, descricaoTreino, detalhes);
+          // PASSO 3: Criar o objeto Treino (Usando o construtor corrigido)
+          return Treino(
+            nomeTreino,
+            descricaoTreino,
+            detalhes,
+            exerciciosCompletos,
+          );
         }).toList();
 
         setState(() {
           treinos = fetchedTreinos;
         });
       } else {
-        // Se a API retornar 404 ou outro erro, apenas limpa a lista e mostra a mensagem de erro.
         print('Falha ao carregar os treinos: ${response.statusCode}');
         setState(() {
           treinos = [];
         });
       }
     } catch (e) {
-      // Tratar o erro de conexão
       print('Erro de conexão ao carregar treinos: $e');
       setState(() {
         treinos = [];
@@ -86,7 +100,6 @@ class _TreinoPageState extends State<TreinoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Meus Treinos")),
-
       body: isLoading
           ? Center(child: CircularProgressIndicator())
           : treinos.isEmpty
@@ -103,39 +116,50 @@ class _TreinoPageState extends State<TreinoPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          treino.titulo,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                  // 🚨 Adiciona InkWell para ser clicável
+                  child: InkWell(
+                    onTap: () {
+                      // Navega para a Playtrainpage, passando os exercícios
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              Playtrainpage(exerTrain: treino.exercicios),
                         ),
-                        SizedBox(height: 4),
-                        Text(treino.nome, style: TextStyle(fontSize: 15)),
-                        SizedBox(height: 8),
-                        Text(
-                          treino.detalhes,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey[700],
+                      );
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            treino.titulo,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 4),
+                          Text(treino.nome, style: TextStyle(fontSize: 15)),
+                          SizedBox(height: 8),
+                          Text(
+                            treino.detalhes,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
               },
             ),
-
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.playlist_add_rounded),
         onPressed: () async {
-          // Espera o retorno da tela de adição de treino
           final bool? treinoAdicionado =
               await Navigator.push(
                     context,
@@ -145,7 +169,6 @@ class _TreinoPageState extends State<TreinoPage> {
                   )
                   as bool?;
 
-          // Se o treino foi adicionado com sucesso (MontagemTreino retornou true), recarrega a lista
           if (treinoAdicionado == true) {
             _loadTreinos();
           }
