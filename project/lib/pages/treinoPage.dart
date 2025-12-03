@@ -34,7 +34,7 @@ class _TreinoPageState extends State<TreinoPage> {
 
     try {
       // TODO: Substituir 'TesteADM' pelo nome de usuário real ou token de autenticação
-      final response = await http.get(Uri.parse('https://izigym-backend.globeapp.dev/gettreino/TesteADM'));
+      final response = await http.get(Uri.parse('https://izigym-backend.globeapp.dev/treino?user=TesteADM'));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = jsonDecode(response.body);
