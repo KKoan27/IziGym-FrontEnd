@@ -35,9 +35,28 @@ class _HomePageState extends State<HomePage> {
             _indiceAtual = novoIndice; // Atualiza a variável e redesenha a tela
           });
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.fitness_center),
+            // Ícone padrão (Inativo)
+            icon: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Image.asset(
+                'assets/IconMusculo.png',
+                width: 24,
+                height: 24,
+                color: Colors.grey,
+              ),
+            ),
+            // Ícone Ativo (Com Zoom)
+            activeIcon: Transform.scale(
+              scale: 1.5,
+              child: Image.asset(
+                'assets/IconMusculo.png',
+                width: 24,
+                height: 24,
+                color: Color(0xFFE50000),
+              ),
+            ),
             label: "Exercícios",
           ),
           BottomNavigationBarItem(

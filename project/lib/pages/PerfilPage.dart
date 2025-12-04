@@ -244,7 +244,7 @@ class _PerfilPageState extends State<PerfilPage> {
                             _imc.toStringAsFixed(2),
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 32,
+                              fontSize: 30,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
