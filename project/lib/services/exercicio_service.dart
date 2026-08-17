@@ -1,28 +1,28 @@
-// Define como buscar os dados
 import 'package:http/http.dart' as http;
 import 'package:project/models/exercicio.dart';
+import 'package:project/models/usuario.dart';
 
 class ExercicioService {
-  // url do backend
-  final String _baseUrl = "https://izigym-backend.globeapp.dev";
+  final String _baseUrl = 'http://127.0.0.1:8090/api/getexercicios';
 
-  // [ORAL] "O método fetchExercicios aceita um parâmetro opcional 'query'.
-  // Isso permite reutilizar a mesma função tanto para listar tudo quanto para filtrar."
   Future<List<Exercicio>> fetchExercicios({String query = ''}) async {
-    // [LÓGICA] Construção dinâmica da URL
-    String endpoint = '$_baseUrl/getexercicios';
-    if (query.isNotEmpty) {
-      endpoint += '?q=$query'; // Adiciona Query Param se houver busca
-    }
+    final user = await UserModel.loadFromPrefs();
+    final token = user?.token ?? '';
 
-    // [TÉCNICO] await espera a resposta da internet antes de continuar
-    final response = await http.get(Uri.parse(endpoint));
+    final uri = Uri.parse(_baseUrl);
 
-    // [ERROS] Verificação do Status Code (200 = OK)
+    final response = await http.get(
+      uri,
+      headers: {
+        if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
     if (response.statusCode == 200) {
       return exercicioFromJson(response.body);
-    } else {
-      throw Exception('Falha ao carregar: ${response.statusCode}');
     }
+
+    throw Exception('Falha ao carregar: ${response.statusCode}');
   }
 }

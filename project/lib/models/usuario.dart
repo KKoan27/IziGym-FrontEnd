@@ -5,6 +5,7 @@ class UserModel {
   final String id;
   final String username;
   final String email;
+  final String? token;
   final double altura;
   final double peso;
 
@@ -12,49 +13,56 @@ class UserModel {
     required this.id,
     required this.username,
     required this.email,
+    this.token,
     required this.altura,
     required this.peso,
   });
 
-  // Construtor Factory para criar o objeto a partir da resposta JSON
-  factory UserModel.fromJson(Map<String, dynamic> json) {
+  factory UserModel.fromJson(Map<String, dynamic> json, {String? token}) {
     return UserModel(
-      // MongoDB ObjectId é convertido para String
-      id: json['id'].toString(),
-      username: json['username'] as String,
-      email: json['email'] as String,
-      // Conversão segura de num (int ou double) para double
-      altura: (json['altura'] as num).toDouble(),
-      peso: (json['peso'] as num).toDouble(),
+      id: json['id']?.toString() ?? '',
+      username:
+          json['nome']?.toString() ??
+          json['username']?.toString() ??
+          '',
+      email: json['email']?.toString() ?? '',
+      token: token ?? json['token']?.toString(),
+      altura: ((json['altura'] ?? 0) as num).toDouble(),
+      peso: ((json['peso'] ?? 0) as num).toDouble(),
     );
   }
 
-  // Método para converter o objeto em Map para salvar no SharedPreferences
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({bool includeToken = false}) {
     return {
       'id': id,
-      'username': username,
+      'nome': username,
       'email': email,
       'altura': altura,
       'peso': peso,
+      if (includeToken) 'token': token ?? '',
     };
   }
 
-  // Salva o objeto UserModel no SharedPreferences
   Future<void> saveToPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    // Salva o JSON do usuário como uma String
+
     await prefs.setString('currentUser', jsonEncode(toJson()));
-    await prefs.setBool('isLoggedIn', true);
+    await prefs.setString('auth_token', token ?? '');
+    await prefs.setBool('isLoggedIn', token != null && token!.isNotEmpty);
   }
 
-  // Recupera o objeto UserModel do SharedPreferences
   static Future<UserModel?> loadFromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     final userJson = prefs.getString('currentUser');
-    if (userJson != null) {
-      return UserModel.fromJson(jsonDecode(userJson));
+
+    if (userJson == null) {
+      return null;
     }
-    return null;
+
+    final decoded = jsonDecode(userJson);
+    final token = prefs.getString('auth_token');
+
+    return UserModel.fromJson(decoded, token: token ?? decoded['token']?.toString());
   }
 }
+

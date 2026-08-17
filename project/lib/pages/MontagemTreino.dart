@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:project/pages/AdicionaExercicio.dart';
 import 'package:http/http.dart' as http;
 import 'package:project/models/usuario.dart';
-import 'package:project/pages/HomePage.dart';
 
 class MontagemTreino extends StatefulWidget {
   final UserModel user;

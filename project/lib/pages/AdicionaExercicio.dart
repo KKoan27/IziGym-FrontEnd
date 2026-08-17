@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:core';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:project/models/exercicio.dart';
 
 class AdicionaExercicio extends StatefulWidget {
   @override
@@ -13,7 +12,6 @@ class AdicionaExercicioState extends State<AdicionaExercicio> {
   late Future<List<Map<String, dynamic>>> exercicioFuture;
   List<int> selectedIndex = [];
   TextEditingController search = TextEditingController();
-  late Future<List<Exercicio>> _futureExercicios;
 
   List<Map<String, dynamic>> bodySelect = [];
 

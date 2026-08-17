@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/usuario.dart';
-import 'package:project/pages/MontagemTreino.dart';
 import 'package:project/pages/treinoPage.dart';
 import 'package:project/pages/lista_exercicios_page.dart';
 import 'package:project/pages/PerfilPage.dart';

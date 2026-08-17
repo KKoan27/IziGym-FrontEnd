@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:project/models/usuario.dart'; // Certifique-se de importar o modelo
 
 // URL base da sua API
-const String _baseUrl = "https://izigym-backend.globeapp.dev/user";
+const String _baseUrl ="http://127.0.0.1:8090/user/auth";
 
 /**
  * Realiza o login do usuário.
@@ -21,7 +21,7 @@ Future<UserModel?> login(
   final Map<String, String> requestBody = {"email": email, "senha": senha};
 
   // Seu backend usa "authuser" como op (operação), vamos usá-lo na URL
-  final Uri uri = Uri.parse('$_baseUrl?op=authuser');
+  final Uri uri = Uri.parse(_baseUrl);
 
   try {
     var result = await http.post(
@@ -34,12 +34,12 @@ Future<UserModel?> login(
     if (result.statusCode == 200) {
       // Sucesso no Login
       final jsonResponse = jsonDecode(result.body);
-
-      final userDataMap = jsonResponse['response'] as Map<String, dynamic>?;
+      final body = jsonResponse['body'] as Map<String, dynamic>?;
+      final userDataMap = body?['response'] as Map<String, dynamic>?;
+      final token = body?['token']?.toString();
 
       if (userDataMap != null) {
-        // O backend retorna o Map direto, não aninhado em 'response' ou 'data'
-        final UserModel user = UserModel.fromJson(userDataMap);
+        final UserModel user = UserModel.fromJson(userDataMap, token: token);
 
         // 🔑 Salvar dados no SharedPreferences
         await user.saveToPrefs();
