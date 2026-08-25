@@ -95,11 +95,11 @@ class AdicionaExercicioState extends State<AdicionaExercicio> {
     var response;
     if (query == null || query.isEmpty) {
       response = await http.get(
-        Uri.parse('https://izigym-backend.globeapp.dev/getexercicios'),
+        Uri.parse('http://127.0.0.1:8090/api/getexercicios'),
       );
     } else {
       response = await http.get(
-        Uri.parse('https://izigym-backend.globeapp.dev/getexercicios?q=$query'),
+        Uri.parse('http://127.0.0.1:8090/api/getexercicios?q=$query'),
       );
     }
 

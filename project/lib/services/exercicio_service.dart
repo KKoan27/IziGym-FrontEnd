@@ -9,7 +9,9 @@ class ExercicioService {
     final user = await UserModel.loadFromPrefs();
     final token = user?.token ?? '';
 
-    final uri = Uri.parse(_baseUrl);
+    final uri = Uri.parse(_baseUrl).replace(
+      queryParameters: query.trim().isEmpty ? null : {'q': query.trim()},
+    );
 
     final response = await http.get(
       uri,
