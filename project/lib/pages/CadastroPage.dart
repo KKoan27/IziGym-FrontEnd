@@ -16,8 +16,12 @@ class _CadastroPageState extends State<CadastroPage> {
   final _emailController = TextEditingController();
   final _senhaController = TextEditingController();
   final _confirmaSenhaController = TextEditingController();
+  bool cadastrando = false;
 
   void _realizarCadastro() async {
+
+
+
     // Validação básica
     if (_senhaController.text != _confirmaSenhaController.text) {
       ScaffoldMessenger.of(
@@ -26,6 +30,9 @@ class _CadastroPageState extends State<CadastroPage> {
       return;
     }
 
+setState((){
+cadastrando = true;
+});
     // Aqui você conectaria com o backend
     // print("Cadastrando: ${_nomeController.text}, ${_emailController.text}");
     var result = await register({
@@ -33,6 +40,7 @@ class _CadastroPageState extends State<CadastroPage> {
       'email': _emailController.text,
       'senha': _senhaController.text,
     }, context);
+
 
     // Vai direto para a Home após cadastro
   }
@@ -108,7 +116,11 @@ class _CadastroPageState extends State<CadastroPage> {
                   ),
                   minimumSize: const Size(double.infinity, 50),
                 ),
-                child: const Text(
+                child:  cadastrando ?CircularProgressIndicator(
+                          color: Colors.white, // Cor do indicador
+                          strokeWidth: 2.5,
+                        ):
+                         const Text(
                   'Cadastrar',
                   style: TextStyle(
                     fontSize: 18,
@@ -175,6 +187,11 @@ class _CadastroPageState extends State<CadastroPage> {
       }
     } on Exception catch (e) {
       rethrow;
+    }
+    finally{
+      setState((){
+cadastrando = false;
+});
     }
   }
 }
