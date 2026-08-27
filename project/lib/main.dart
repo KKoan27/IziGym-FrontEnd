@@ -3,6 +3,10 @@ import 'pages/login.dart';
 import 'package:project/pages/AdicionaExercicio.dart';
 import 'package:project/pages/HomePage.dart';
 import 'package:project/pages/MontagemTreino.dart';
+import 'package:project/pages/PlayTrainpage.dart';
+
+
+
 
 void main() {
   runApp(
@@ -14,9 +18,8 @@ void main() {
 
       // DEFINIÇÃO DAS ROTAS
       routes: {
-        '/login': (context) => const LoginScreen(),
-        // '/addtreino': (context) => MontagemTreino(),
-        '/selectexercicio': (context) => AdicionaExercicio(),
+        // '/addtreino': (context) => const MontagemTreino(),
+        '/ExecTreino': (context) => const Playtrainpage(),
       },
 
       themeMode: ThemeMode.dark,

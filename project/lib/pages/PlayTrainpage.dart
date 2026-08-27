@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:project/models/exercicio.dart';
+import 'package:project/models/treino.dart';
 
 class Playtrainpage extends StatefulWidget {
   // A lista de Exercicios com repetições e intervalo
-  final List<Exercicio> exerTrain;
+  final Treino treino;
 
-  const Playtrainpage({super.key, required this.exerTrain});
+  const Playtrainpage({super.key, required this.treino});
 
   @override
   State<Playtrainpage> createState() => PlaytrainpageState();
@@ -16,15 +17,15 @@ class PlaytrainpageState extends State<Playtrainpage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Iniciando Treino")),
-      body: widget.exerTrain.isEmpty
+      body: widget.treino.exercicios.isEmpty
           ? const Center(
               child: Text("Nenhum exercício encontrado para este treino."),
             )
           : ListView.builder(
               padding: const EdgeInsets.all(16.0),
-              itemCount: widget.exerTrain.length,
+              itemCount: widget.treino.exercicios.length,
               itemBuilder: (context, index) {
-                final exercicio = widget.exerTrain[index];
+                final exercicio = widget.treino.exercicios[index];
 
                 final String repeticoes = exercicio.repeticoes != null
                     ? "${exercicio.repeticoes} Repetições"
