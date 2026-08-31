@@ -66,7 +66,7 @@ class _TreinoPageState extends State<TreinoPage> {
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
-                              Playtrainpage(exerTrain: treino.exercicios),
+                              Playtrainpage(treino: treino),
                         ),
                       );
                     },
