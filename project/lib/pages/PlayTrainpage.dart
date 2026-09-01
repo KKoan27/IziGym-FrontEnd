@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:project/models/exercicio.dart';
 import 'package:project/models/treino.dart';
 
 class Playtrainpage extends StatefulWidget {
@@ -42,7 +41,7 @@ class PlaytrainpageState extends State<Playtrainpage> {
   }
 
   void downPage() {
-    print('Botão Próximo foi clicado! Página Atual: $_paginaAtual');
+    
     if (_paginaAtual > 0) {
       _pageViewController.previousPage(
         duration: const Duration(milliseconds: 300),
@@ -55,17 +54,13 @@ class PlaytrainpageState extends State<Playtrainpage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const BackButton(),
+        title: Center(
+          
+          child: 
             Text(
               widget.treino.nomeTreino,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            const SizedBox(width: 40),
-          ],
+            ), 
         ),
       ),
       body: PageView.builder(

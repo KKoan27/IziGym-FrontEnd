@@ -50,29 +50,26 @@ class AdicionaExercicioState extends State<AdicionaExercicio> {
                         var musculosAlvo = filtrados[index].musculosAlvo
                             .join(',');
 
-                        final bool selecionado = selectedIndex.contains(index);
+                        final bool selecionado = bodySelect.contains(filtrados[index]);
 
                         return Card(
                           elevation: 3,
                           color: selecionado ? Colors.red[700] : Colors.black38,
                           margin: EdgeInsets.all(10),
-
+ 
                           child: CheckboxListTile(
                             title: Text(filtrados[index].nome),
                             subtitle: Text(musculosAlvo),
 
                             value: selecionado,
-                            onChanged: (value) {
-                              setState(() {
+                            onChanged: (value)=> setState(() {
                                 if (selecionado) {
-                                  selectedIndex.remove(index);
                                   bodySelect.remove(filtrados[index]);
                                 } else {
-                                  selectedIndex.add(index);
                                   bodySelect.add(filtrados[index]);
                                 }
-                              });
-                            },
+                              })
+                            ,
                           ),
                         );
                       },

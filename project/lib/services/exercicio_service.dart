@@ -30,5 +30,5 @@ class ExercicioService {
 
 
 List<Exercicio> filterExercicio(List<Exercicio> exercicios, String query){ 
-  return exercicios.where((e) =>e.nome.toLowerCase().contains(query) ).toList();
+   return exercicios.where((e) => e.nome.toLowerCase().contains(query.toLowerCase())).toList();
 }}
